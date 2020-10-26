@@ -1,0 +1,108 @@
+{
+  "name": "externaldb-operator",
+  "version": "0.0.1",
+  "description": "operator to create external databases",
+  "keywords": [
+    "externaldb-operator"
+  ],
+  "homepage": "https://github.com/codejamninja/externaldb-operator",
+  "bugs": {
+    "url": "https://github.com/codejamninja/externaldb-operator/issues",
+    "email": "jam@codejam.ninja"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "Jam Risser",
+    "email": "jam@codejam.ninja",
+    "url": "https://codejam.ninja"
+  },
+  "bin": {
+    "externaldb-operator": "bin/externaldbOperator.js"
+  },
+  "files": [
+    "bin",
+    "lib"
+  ],
+  "main": "lib/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/codejamninja/externaldb-operator"
+  },
+  "scripts": {
+    "build": "make -s build",
+    "clean": "make -s clean",
+    "coverage": "make -s coverage",
+    "format": "make -s format",
+    "inc": "npm version patch --git=false 2>/dev/null || true",
+    "lint": "make -s lint",
+    "make": "make",
+    "prepare": "make -s prepare",
+    "purge": "make -s purge",
+    "report": "make -s report",
+    "spellcheck": "make -s spellcheck",
+    "start": "make -s start",
+    "test": "make -s test",
+    "test:ui": "make test-ui",
+    "test:watch": "make -s test-watch"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.12.1",
+    "@dot-i/k8s-operator": "^1.0.15",
+    "@kubernetes/client-node": "^0.12.3",
+    "@operators/helm2cattle": "^0.0.3",
+    "@operators/velero-schedule-replicator": "^0.0.2",
+    "core-js": "^3.6.5",
+    "fs-extra": "^9.0.1",
+    "isomorphic-ws": "^4.0.1",
+    "ora": "^5.1.0",
+    "yaml": "^1.10.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.12.1",
+    "@babel/core": "^7.12.3",
+    "@babel/node": "^7.12.1",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/plugin-proposal-decorators": "^7.12.1",
+    "@babel/plugin-proposal-optional-chaining": "^7.12.1",
+    "@babel/plugin-transform-runtime": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.1",
+    "@types/fs-extra": "^9.0.2",
+    "@types/jest": "^26.0.14",
+    "@typescript-eslint/eslint-plugin": "^4.4.1",
+    "@typescript-eslint/parser": "^4.4.1",
+    "cspell": "^4.1.1",
+    "eslint": "^7.11.0",
+    "eslint-config-airbnb-typescript": "^11.2.1",
+    "eslint-config-prettier": "^6.13.0",
+    "eslint-plugin-import": "^2.22.1",
+    "jest": "^26.5.3",
+    "jest-sonar-reporter": "^2.0.0",
+    "lockfile-lint": "^4.3.7",
+    "majestic": "^1.8.0",
+    "prettier": "^2.1.2",
+    "typescript": "^4.0.3"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "eslintIgnore": [
+    "lib"
+  ],
+  "jest": {
+    "testRegex": "tests(/|/.*/)[^_/]*[jt]sx?$",
+    "verbose": true
+  },
+  "jestSonar": {
+    "reportPath": "node_modules/.tmp/reports",
+    "reportFile": "test-report.xml",
+    "indent": 4
+  },
+  "prettier": {
+    "singleQuote": true,
+    "trailingComma": "none"
+  },
+  "docker": {
+    "registry": "codejamninja"
+  }
+}

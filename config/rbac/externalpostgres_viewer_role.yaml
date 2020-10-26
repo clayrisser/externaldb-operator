@@ -1,0 +1,20 @@
+# permissions for end users to view externalpostgres.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: externalpostgres-viewer-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalpostgres
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalpostgres/status
+    verbs:
+      - get

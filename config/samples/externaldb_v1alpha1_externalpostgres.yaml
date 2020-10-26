@@ -1,0 +1,7 @@
+apiVersion: externaldb.databases.land/v1alpha1
+kind: ExternalPostgres
+metadata:
+  name: externalpostgres-sample
+spec:
+  # Add fields here
+  foo: bar
