@@ -6,6 +6,7 @@ import path from 'path';
 import Logger from './logger';
 import { Config } from './config';
 import { OperatorFrameworkProject, OperatorFrameworkResource } from './types';
+import { DatabaseKind, createDatabaseClient } from './databases';
 
 export const project: OperatorFrameworkProject = YAML.parse(
   fs.readFileSync(path.resolve(__dirname, '../PROJECT')).toString()
@@ -29,6 +30,8 @@ export default class ExternaldbOperator extends Operator {
           ExternaldbOperator.kind2plural(resource.kind),
           async (e) => {
             try {
+              const database = createDatabaseClient(DatabaseKind.Postgres);
+              await database.createDatabase('hello');
               console.log(e);
             } catch (err) {
               console.log(err);
