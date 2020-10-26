@@ -28,9 +28,11 @@ type ExternalPostgresSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of ExternalPostgres. Edit ExternalPostgres_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
-	Bar string `json:"foo,omitempty"`
+	// name is the name of the database to create
+	Name string `json:"name,omitempty"`
+
+	// cleanup will delete the database when the ExternalPostgres resource is deleted
+	Cleanup bool `json:"cleanup,omitempty"`
 }
 
 // ExternalPostgresStatus defines the observed state of ExternalPostgres
