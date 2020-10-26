@@ -2,6 +2,7 @@
   "name": "externaldb-operator",
   "version": "0.0.1",
   "description": "operator to create external databases",
+  "private": true,
   "keywords": [
     "externaldb-operator"
   ],
