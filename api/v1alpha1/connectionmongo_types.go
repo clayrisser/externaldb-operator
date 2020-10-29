@@ -26,28 +26,28 @@ import (
 // ConnectionMongoSpec defines the desired state of ConnectionMongo
 type ConnectionMongoSpec struct {
 	// mongo hostname
-	Hostname string `json:"foo,omitempty"`
+	Hostname string `json:"hostname,omitempty"`
 
 	// mongo port
-	Port int64 `json:"foo,omitempty"`
+	Port int64 `json:"port,omitempty"`
 
 	// mongo username
-	Username string `json:"foo,omitempty"`
+	Username string `json:"username,omitempty"`
 
 	// mongo password
-	Password string `json:"foo,omitempty"`
+	Password string `json:"password,omitempty"`
 
 	// mongo database name
-	Database string `json:"foo,omitempty"`
+	Database string `json:"database,omitempty"`
 
 	// mongo connection url
-	Url string `json:"foo,omitempty"`
+	Url string `json:"url,omitempty"`
 
 	// secret name containing `MONGO_PASSWORD` or `MONGO_CONNECITON_URL`
-	SecretName string `json:"foo,omitempty"`
+	SecretName string `json:"secretName,omitempty"`
 
 	// config map name containing `MONGO_HOSTNAME`, `MONGO_PORT`, `MONGO_USERNAME` or `MONGO_DATABASE`
-	ConfigMapName string `json:"foo,omitempty"`
+	ConfigMapName string `json:"configMapName,omitempty"`
 }
 
 // ConnectionMongoStatus defines the observed state of ConnectionMongo

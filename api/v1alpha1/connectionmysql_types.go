@@ -26,28 +26,28 @@ import (
 // ConnectionMysqlSpec defines the desired state of ConnectionMysql
 type ConnectionMysqlSpec struct {
 	// mysql hostname
-	Hostname string `json:"foo,omitempty"`
+	Hostname string `json:"hostname,omitempty"`
 
 	// mysql port
-	Port int64 `json:"foo,omitempty"`
+	Port int64 `json:"port,omitempty"`
 
 	// mysql username
-	Username string `json:"foo,omitempty"`
+	Username string `json:"username,omitempty"`
 
 	// mysql password
-	Password string `json:"foo,omitempty"`
+	Password string `json:"password,omitempty"`
 
 	// mysql database name
-	Database string `json:"foo,omitempty"`
+	Database string `json:"database,omitempty"`
 
 	// mysql connection url
-	Url string `json:"foo,omitempty"`
+	Url string `json:"url,omitempty"`
 
 	// secret name containing `MYSQL_PASSWORD` or `MYSQL_CONNECITON_URL`
-	SecretName string `json:"foo,omitempty"`
+	SecretName string `json:"secretName,omitempty"`
 
 	// config map name containing `MYSQL_HOSTNAME`, `MYSQL_PORT`, `MYSQL_USERNAME` or `MYSQL_DATABASE`
-	ConfigMapName string `json:"foo,omitempty"`
+	ConfigMapName string `json:"configMapName,omitempty"`
 }
 
 // ConnectionMysqlStatus defines the observed state of ConnectionMysql

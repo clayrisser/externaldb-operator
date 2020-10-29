@@ -37,10 +37,32 @@ spec:
         spec:
           description: ConnectionMysqlSpec defines the desired state of ConnectionMysql
           properties:
-            foo:
+            configMapName:
               description:
                 config map name containing `MYSQL_HOSTNAME`, `MYSQL_PORT`,
                 `MYSQL_USERNAME` or `MYSQL_DATABASE`
+              type: string
+            database:
+              description: mysql database name
+              type: string
+            hostname:
+              description: mysql hostname
+              type: string
+            password:
+              description: mysql password
+              type: string
+            port:
+              description: mysql port
+              format: int64
+              type: integer
+            secretName:
+              description: secret name containing `MYSQL_PASSWORD` or `MYSQL_CONNECITON_URL`
+              type: string
+            url:
+              description: mysql connection url
+              type: string
+            username:
+              description: mysql username
               type: string
           type: object
         status:

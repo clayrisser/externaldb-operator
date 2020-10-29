@@ -26,28 +26,28 @@ import (
 // ConnectionPostgresSpec defines the desired state of ConnectionPostgres
 type ConnectionPostgresSpec struct {
 	// postgres hostname
-	Hostname string `json:"foo,omitempty"`
+	Hostname string `json:"hostname,omitempty"`
 
 	// postgres port
-	Port int64 `json:"foo,omitempty"`
+	Port int64 `json:"port,omitempty"`
 
 	// postgres username
-	Username string `json:"foo,omitempty"`
+	Username string `json:"username,omitempty"`
 
 	// postgres password
-	Password string `json:"foo,omitempty"`
+	Password string `json:"password,omitempty"`
 
 	// postgres database name
-	Database string `json:"foo,omitempty"`
+	Database string `json:"database,omitempty"`
 
 	// postgres connection url
-	Url string `json:"foo,omitempty"`
+	Url string `json:"url,omitempty"`
 
 	// secret name containing `POSTGRES_PASSWORD` or `POSTGRES_CONNECITON_URL`
-	SecretName string `json:"foo,omitempty"`
+	SecretName string `json:"secretName,omitempty"`
 
 	// config map name containing `POSTGRES_HOSTNAME`, `POSTGRES_PORT`, `POSTGRES_USERNAME` or `POSTGRES_DATABASE`
-	ConfigMapName string `json:"foo,omitempty"`
+	ConfigMapName string `json:"configMapName,omitempty"`
 }
 
 // ConnectionPostgresStatus defines the observed state of ConnectionPostgres

@@ -37,10 +37,32 @@ spec:
         spec:
           description: ConnectionMongoSpec defines the desired state of ConnectionMongo
           properties:
-            foo:
+            configMapName:
               description:
                 config map name containing `MONGO_HOSTNAME`, `MONGO_PORT`,
                 `MONGO_USERNAME` or `MONGO_DATABASE`
+              type: string
+            database:
+              description: mongo database name
+              type: string
+            hostname:
+              description: mongo hostname
+              type: string
+            password:
+              description: mongo password
+              type: string
+            port:
+              description: mongo port
+              format: int64
+              type: integer
+            secretName:
+              description: secret name containing `MONGO_PASSWORD` or `MONGO_CONNECITON_URL`
+              type: string
+            url:
+              description: mongo connection url
+              type: string
+            username:
+              description: mongo username
               type: string
           type: object
         status:

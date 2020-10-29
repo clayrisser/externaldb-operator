@@ -37,10 +37,32 @@ spec:
         spec:
           description: ConnectionPostgresSpec defines the desired state of ConnectionPostgres
           properties:
-            foo:
+            configMapName:
               description:
                 config map name containing `POSTGRES_HOSTNAME`, `POSTGRES_PORT`,
                 `POSTGRES_USERNAME` or `POSTGRES_DATABASE`
+              type: string
+            database:
+              description: postgres database name
+              type: string
+            hostname:
+              description: postgres hostname
+              type: string
+            password:
+              description: postgres password
+              type: string
+            port:
+              description: postgres port
+              format: int64
+              type: integer
+            secretName:
+              description: secret name containing `POSTGRES_PASSWORD` or `POSTGRES_CONNECITON_URL`
+              type: string
+            url:
+              description: postgres connection url
+              type: string
+            username:
+              description: postgres username
               type: string
           type: object
         status:
