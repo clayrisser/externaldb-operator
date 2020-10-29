@@ -39,8 +39,8 @@ spec:
           properties:
             foo:
               description:
-                Foo is an example field of ConnectionMysql. Edit ConnectionMysql_types.go
-                to remove/update
+                config map name containing `MYSQL_HOSTNAME`, `MYSQL_PORT`,
+                `MYSQL_USERNAME` or `MYSQL_DATABASE`
               type: string
           type: object
         status:

@@ -25,11 +25,17 @@ import (
 
 // ExternalMysqlSpec defines the desired state of ExternalMysql
 type ExternalMysqlSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// name is the name of the database to create
+	Name string `json:"name,omitempty"`
 
-	// Foo is an example field of ExternalMysql. Edit ExternalMysql_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// cleanup will delete the database when the ExternalMysql resource is deleted
+	Cleanup bool `json:"cleanup,omitempty"`
+
+        // connection mysql resource
+        Connection DatabaseConnection `json:"connection,omitempty"`
+
+	// kustomization to apply after success
+	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
 }
 
 // ExternalMysqlStatus defines the observed state of ExternalMysql

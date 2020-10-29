@@ -25,11 +25,29 @@ import (
 
 // ConnectionMongoSpec defines the desired state of ConnectionMongo
 type ConnectionMongoSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// mongo hostname
+	Hostname string `json:"foo,omitempty"`
 
-	// Foo is an example field of ConnectionMongo. Edit ConnectionMongo_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// mongo port
+	Port int64 `json:"foo,omitempty"`
+
+	// mongo username
+	Username string `json:"foo,omitempty"`
+
+	// mongo password
+	Password string `json:"foo,omitempty"`
+
+	// mongo database name
+	Database string `json:"foo,omitempty"`
+
+	// mongo connection url
+	Url string `json:"foo,omitempty"`
+
+	// secret name containing `MONGO_PASSWORD` or `MONGO_CONNECITON_URL`
+	SecretName string `json:"foo,omitempty"`
+
+	// config map name containing `MONGO_HOSTNAME`, `MONGO_PORT`, `MONGO_USERNAME` or `MONGO_DATABASE`
+	ConfigMapName string `json:"foo,omitempty"`
 }
 
 // ConnectionMongoStatus defines the observed state of ConnectionMongo

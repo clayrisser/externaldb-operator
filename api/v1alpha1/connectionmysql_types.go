@@ -25,11 +25,29 @@ import (
 
 // ConnectionMysqlSpec defines the desired state of ConnectionMysql
 type ConnectionMysqlSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// mysql hostname
+	Hostname string `json:"foo,omitempty"`
 
-	// Foo is an example field of ConnectionMysql. Edit ConnectionMysql_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// mysql port
+	Port int64 `json:"foo,omitempty"`
+
+	// mysql username
+	Username string `json:"foo,omitempty"`
+
+	// mysql password
+	Password string `json:"foo,omitempty"`
+
+	// mysql database name
+	Database string `json:"foo,omitempty"`
+
+	// mysql connection url
+	Url string `json:"foo,omitempty"`
+
+	// secret name containing `MYSQL_PASSWORD` or `MYSQL_CONNECITON_URL`
+	SecretName string `json:"foo,omitempty"`
+
+	// config map name containing `MYSQL_HOSTNAME`, `MYSQL_PORT`, `MYSQL_USERNAME` or `MYSQL_DATABASE`
+	ConfigMapName string `json:"foo,omitempty"`
 }
 
 // ConnectionMysqlStatus defines the observed state of ConnectionMysql

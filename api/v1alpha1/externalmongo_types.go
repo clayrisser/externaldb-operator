@@ -25,11 +25,17 @@ import (
 
 // ExternalMongoSpec defines the desired state of ExternalMongo
 type ExternalMongoSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// name is the name of the database to create
+	Name string `json:"name,omitempty"`
 
-	// Foo is an example field of ExternalMongo. Edit ExternalMongo_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// cleanup will delete the database when the ExternalMongo resource is deleted
+	Cleanup bool `json:"cleanup,omitempty"`
+
+        // connection mongo resource
+        Connection DatabaseConnection `json:"connection,omitempty"`
+
+	// kustomization to apply after success
+	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
 }
 
 // ExternalMongoStatus defines the observed state of ExternalMongo
