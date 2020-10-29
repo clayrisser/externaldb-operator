@@ -23,3 +23,4 @@ export interface HashMap<T = any> {
 }
 
 export * from './kustomize';
+export * from './externaldb';

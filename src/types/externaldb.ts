@@ -24,6 +24,38 @@ export interface ExternalDatabaseSpec {
   name?: string; // string `json:"name,omitempty"`
 }
 
-export interface ExternalDatabaseResource extends KubernetesObject {
-  spec?: ExternalDatabaseSpec;
+export interface ConnectionMongoSpec extends ConnectionDatabaseSpec {}
+
+export interface ConnectionMysqlSpec extends ConnectionDatabaseSpec {}
+
+export interface ConnectionPostgresSpec extends ConnectionDatabaseSpec {}
+
+export interface ExternalMongoSpec extends ExternalDatabaseSpec {}
+
+export interface ExternalMysqlSpec extends ExternalDatabaseSpec {}
+
+export interface ExternalPostgresSpec extends ExternalDatabaseSpec {}
+
+export interface ConnectionMongoResource extends KubernetesObject {
+  spec?: ConnectionMongoSpec;
+}
+
+export interface ConnectionMysqlResource extends KubernetesObject {
+  spec?: ConnectionMysqlSpec;
+}
+
+export interface ConnectionPostgresResource extends KubernetesObject {
+  spec?: ConnectionPostgresSpec;
+}
+
+export interface ExternalMongoResource extends KubernetesObject {
+  spec?: ExternalMongoSpec;
+}
+
+export interface ExternalMysqlResource extends KubernetesObject {
+  spec?: ExternalMysqlSpec;
+}
+
+export interface ExternalPostgresResource extends KubernetesObject {
+  spec?: ExternalPostgresSpec;
 }

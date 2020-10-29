@@ -53,11 +53,16 @@ export default class ExternaldbOperator extends Operator {
         try {
           switch (e.type) {
             case ResourceEventType.Added:
-              return controller.added(e);
+              await controller.added(e.object, e.meta);
+              await controller.addedOrModified(e.object, e.meta);
+              return;
             case ResourceEventType.Deleted:
-              return controller.deleted(e);
+              await controller.deleted(e.object, e.meta);
+              return;
             case ResourceEventType.Modified:
-              return controller.modified(e);
+              await controller.modified(e.object, e.meta);
+              await controller.addedOrModified(e.object, e.meta);
+              return;
           }
         } catch (err) {
           console.log(err);
