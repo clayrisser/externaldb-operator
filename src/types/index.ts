@@ -17,3 +17,9 @@ export interface OperatorFrameworkProject {
   resources: OperatorFrameworkResource[];
   version: string;
 }
+
+export interface HashMap<T = any> {
+  [key: string]: T;
+}
+
+export * from './kustomize';
