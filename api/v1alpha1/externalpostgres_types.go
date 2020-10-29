@@ -17,8 +17,8 @@ limitations under the License.
 package v1alpha1
 
 import (
+	kustomizeTypes "sigs.k8s.io/kustomize/api/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-        kustomizeTypes "sigs.k8s.io/kustomize/api/types"
 )
 
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
@@ -26,17 +26,14 @@ import (
 
 // ExternalPostgresSpec defines the desired state of ExternalPostgres
 type ExternalPostgresSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
 	// name is the name of the database to create
 	Name string `json:"name,omitempty"`
 
 	// cleanup will delete the database when the ExternalPostgres resource is deleted
 	Cleanup bool `json:"cleanup,omitempty"`
 
-        // kustomization to apply after success
-        Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
+	// kustomization to apply after success
+	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
 }
 
 // ExternalPostgresStatus defines the observed state of ExternalPostgres

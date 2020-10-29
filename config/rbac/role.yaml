@@ -1,3 +1,4 @@
+
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -5,43 +6,43 @@ metadata:
   creationTimestamp: null
   name: manager-role
 rules:
-  - apiGroups:
-      - externaldb.databases.land
-    resources:
-      - connectionpostgres
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - externaldb.databases.land
-    resources:
-      - connectionpostgres/status
-    verbs:
-      - get
-      - patch
-      - update
-  - apiGroups:
-      - externaldb.databases.land
-    resources:
-      - externalpostgres
-    verbs:
-      - create
-      - delete
-      - get
-      - list
-      - patch
-      - update
-      - watch
-  - apiGroups:
-      - externaldb.databases.land
-    resources:
-      - externalpostgres/status
-    verbs:
-      - get
-      - patch
-      - update
+- apiGroups:
+  - externaldb.databases.land
+  resources:
+  - connectionpostgres
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - externaldb.databases.land
+  resources:
+  - connectionpostgres/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - externaldb.databases.land
+  resources:
+  - externalpostgres
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - externaldb.databases.land
+  resources:
+  - externalpostgres/status
+  verbs:
+  - get
+  - patch
+  - update

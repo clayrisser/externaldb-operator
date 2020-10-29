@@ -25,11 +25,29 @@ import (
 
 // ConnectionPostgresSpec defines the desired state of ConnectionPostgres
 type ConnectionPostgresSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+	// postgres hostname
+	Hostname string `json:"foo,omitempty"`
 
-	// Foo is an example field of ConnectionPostgres. Edit ConnectionPostgres_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	// postgres port
+	Port int64 `json:"foo,omitempty"`
+
+	// postgres username
+	Username string `json:"foo,omitempty"`
+
+	// postgres password
+	Password string `json:"foo,omitempty"`
+
+	// postgres database name
+	Database string `json:"foo,omitempty"`
+
+	// postgres connection url
+	Url string `json:"foo,omitempty"`
+
+	// secret name containing `POSTGRES_PASSWORD` or `POSTGRES_CONNECITON_URL`
+	SecretName string `json:"foo,omitempty"`
+
+	// config map name containing `POSTGRES_HOSTNAME`, `POSTGRES_PORT`, `POSTGRES_USERNAME` or `POSTGRES_DATABASE`
+	ConfigMapName string `json:"foo,omitempty"`
 }
 
 // ConnectionPostgresStatus defines the observed state of ConnectionPostgres
