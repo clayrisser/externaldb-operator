@@ -5,20 +5,20 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.3.0
   creationTimestamp: null
-  name: externalpostgres.externaldb.databases.land
+  name: externalmongoes.externaldb.databases.land
 spec:
   group: externaldb.databases.land
   names:
-    kind: ExternalPostgres
-    listKind: ExternalPostgresList
-    plural: externalpostgres
-    singular: externalpostgres
+    kind: ExternalMongo
+    listKind: ExternalMongoList
+    plural: externalmongoes
+    singular: externalmongo
   scope: Namespaced
   subresources:
     status: {}
   validation:
     openAPIV3Schema:
-      description: ExternalPostgres is the Schema for the externalpostgres API
+      description: ExternalMongo is the Schema for the externalmongoes API
       properties:
         apiVersion:
           description:
@@ -35,15 +35,15 @@ spec:
         metadata:
           type: object
         spec:
-          description: ExternalPostgresSpec defines the desired state of ExternalPostgres
+          description: ExternalMongoSpec defines the desired state of ExternalMongo
           properties:
             cleanup:
               description:
-                cleanup will delete the database when the ExternalPostgres
+                cleanup will delete the database when the ExternalMongo
                 resource is deleted
               type: boolean
             connection:
-              description: connection postgres resource
+              description: connection mongo resource
               properties:
                 name:
                   description: name of the connection postgres
@@ -527,7 +527,7 @@ spec:
               type: string
           type: object
         status:
-          description: ExternalPostgresStatus defines the observed state of ExternalPostgres
+          description: ExternalMongoStatus defines the observed state of ExternalMongo
           type: object
       type: object
   version: v1alpha1
