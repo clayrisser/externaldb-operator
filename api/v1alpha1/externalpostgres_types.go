@@ -32,8 +32,19 @@ type ExternalPostgresSpec struct {
 	// cleanup will delete the database when the ExternalPostgres resource is deleted
 	Cleanup bool `json:"cleanup,omitempty"`
 
+        // connection postgres resource
+        Connection PostgresConnection `json:"connection,omitempty"`
+
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
+}
+
+type PostgresConnection struct {
+	// name of the connection postgres
+	Name string `json:"name,omitempty"`
+
+	// namespace of the connection postgres
+	Namespace string `json:"namespace,omitempty"`
 }
 
 // ExternalPostgresStatus defines the observed state of ExternalPostgres
