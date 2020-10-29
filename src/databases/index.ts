@@ -1,5 +1,5 @@
-import Postgres from './postgres';
 import { ClientConfig } from 'pg';
+import Postgres from './postgres';
 
 export abstract class DatabaseClient {
   abstract async createDatabase(

@@ -189,7 +189,7 @@ push: docker-push
 stop: docker-stop
 up: docker-up
 generate: operator-framework-generate
-manifests: operator-framework-manifests
+manifests: operator-framework-manifests +format
 install-crds: operator-framework-install
 uninstall-crds: operator-framework-uninstall
 
