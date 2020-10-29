@@ -1,0 +1,7 @@
+apiVersion: externaldb.databases.land/v1alpha1
+kind: ConnectionMongo
+metadata:
+  name: connectionmongo-sample
+spec:
+  # Add fields here
+  foo: bar

@@ -1,0 +1,24 @@
+# permissions for end users to edit externalmysqls.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: externalmysql-editor-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmysqls
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmysqls/status
+    verbs:
+      - get

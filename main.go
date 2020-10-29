@@ -83,6 +83,38 @@ func main() {
 		setupLog.Error(err, "unable to create controller", "controller", "ConnectionPostgres")
 		os.Exit(1)
 	}
+	if err = (&controllers.ConnectionMongoReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("ConnectionMongo"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ConnectionMongo")
+		os.Exit(1)
+	}
+	if err = (&controllers.ConnectionMysqlReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("ConnectionMysql"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ConnectionMysql")
+		os.Exit(1)
+	}
+	if err = (&controllers.ExternalMysqlReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("ExternalMysql"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ExternalMysql")
+		os.Exit(1)
+	}
+	if err = (&controllers.ExternalMongoReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("ExternalMongo"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "ExternalMongo")
+		os.Exit(1)
+	}
 	// +kubebuilder:scaffold:builder
 
 	setupLog.Info("starting manager")

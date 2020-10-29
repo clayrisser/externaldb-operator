@@ -1,0 +1,24 @@
+# permissions for end users to edit externalmongoes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: externalmongo-editor-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmongoes
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmongoes/status
+    verbs:
+      - get

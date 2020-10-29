@@ -8,6 +8,46 @@ rules:
   - apiGroups:
       - externaldb.databases.land
     resources:
+      - connectionmongoes
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmongoes/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmysqls
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmysqls/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
       - connectionpostgres
     verbs:
       - create
@@ -21,6 +61,46 @@ rules:
       - externaldb.databases.land
     resources:
       - connectionpostgres/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmongoes
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmongoes/status
+    verbs:
+      - get
+      - patch
+      - update
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmysqls
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - externalmysqls/status
     verbs:
       - get
       - patch

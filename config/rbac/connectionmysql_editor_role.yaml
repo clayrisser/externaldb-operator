@@ -1,0 +1,24 @@
+# permissions for end users to edit connectionmysqls.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: connectionmysql-editor-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmysqls
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmysqls/status
+    verbs:
+      - get

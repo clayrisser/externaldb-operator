@@ -1,0 +1,24 @@
+# permissions for end users to edit connectionmongoes.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: connectionmongo-editor-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmongoes
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionmongoes/status
+    verbs:
+      - get
