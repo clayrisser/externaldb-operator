@@ -4,22 +4,22 @@ projectName: externaldb-operator
 repo: github.com/codejamninja/externaldb-operator
 resources:
 - group: externaldb
-  kind: ExternalPostgres
+  kind: ConnectionMongo
   version: v1alpha1
 - group: externaldb
   kind: ConnectionPostgres
   version: v1alpha1
 - group: externaldb
-  kind: ConnectionMongo
-  version: v1alpha1
-- group: externaldb
   kind: ConnectionMysql
   version: v1alpha1
 - group: externaldb
-  kind: ExternalMysql
+  kind: ExternalPostgres
   version: v1alpha1
 - group: externaldb
   kind: ExternalMongo
+  version: v1alpha1
+- group: externaldb
+  kind: ExternalMysql
   version: v1alpha1
 version: 3-alpha
 plugins:
