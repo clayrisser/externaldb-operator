@@ -1,0 +1,20 @@
+# permissions for end users to view connectionpostgres.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: connectionpostgres-viewer-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionpostgres
+    verbs:
+      - get
+      - list
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionpostgres/status
+    verbs:
+      - get

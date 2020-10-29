@@ -1,0 +1,24 @@
+# permissions for end users to edit connectionpostgres.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: connectionpostgres-editor-role
+rules:
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionpostgres
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - externaldb.databases.land
+    resources:
+      - connectionpostgres/status
+    verbs:
+      - get

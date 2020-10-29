@@ -1,4 +1,5 @@
 ## Append samples you want in your CSV to this file as resources ##
 resources:
   - externaldb_v1alpha1_externalpostgres.yaml
+  - externaldb_v1alpha1_connectionpostgres.yaml
 # +kubebuilder:scaffold:manifestskustomizesamples
