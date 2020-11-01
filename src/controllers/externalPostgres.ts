@@ -97,8 +97,20 @@ export default class ExternalPostgres extends ExternalDatabase {
       ResourceVersion.V1alpha1,
       namespace,
       ExternaldbOperator.kind2plural(ResourceKind.ExternalPostgres),
-      resource.spec.connection.name,
-      status
+      resource.metadata.name,
+      [
+        {
+          op: 'replace',
+          path: '/status',
+          value: status
+        }
+      ],
+      undefined,
+      undefined,
+      undefined,
+      {
+        headers: { 'Content-Type': 'application/json-patch+json' }
+      }
     );
   }
 }
