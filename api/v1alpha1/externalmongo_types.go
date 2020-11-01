@@ -34,9 +34,6 @@ type ExternalMongoSpec struct {
         // connection mongo resource
         Connection DatabaseConnection `json:"connection,omitempty"`
 
-	// mongo database name
-	Database string `json:"database,omitempty"`
-
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
 }
