@@ -52,6 +52,9 @@ spec:
                   description: namespace of the connection postgres
                   type: string
               type: object
+            database:
+              description: mysql database name
+              type: string
             kustomization:
               description: kustomization to apply after success
               properties:

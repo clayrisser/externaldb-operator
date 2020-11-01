@@ -34,6 +34,9 @@ type ExternalMysqlSpec struct {
         // connection mysql resource
         Connection DatabaseConnection `json:"connection,omitempty"`
 
+	// mysql database name
+	Database string `json:"database,omitempty"`
+
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
 }

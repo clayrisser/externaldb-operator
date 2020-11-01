@@ -20,6 +20,7 @@ export interface DatabaseConnection {
 export interface ExternalDatabaseSpec {
   cleanup?: boolean; // bool `json:"cleanup,omitempty"`
   connection?: DatabaseConnection; // DatabaseConnection `json:"connection,omitempty"`
+  database?: string; // string `json:"database,omitempty"`
   kustomization?: KustomizationSpec; // KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
   name?: string; // string `json:"name,omitempty"`
 }

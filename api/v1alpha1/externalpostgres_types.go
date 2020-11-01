@@ -34,6 +34,9 @@ type ExternalPostgresSpec struct {
         // connection postgres resource
         Connection DatabaseConnection `json:"connection,omitempty"`
 
+	// postgres database name
+	Database string `json:"database,omitempty"`
+
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
 }
