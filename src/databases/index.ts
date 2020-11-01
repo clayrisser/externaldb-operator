@@ -1,16 +1,6 @@
 import { ClientConfig } from 'pg';
+import DatabaseClient from './databaseClient';
 import Postgres from './postgres';
-
-export abstract class DatabaseClient {
-  abstract async createDatabase(
-    databaseName: string,
-    createDatabaseOptions?: Partial<CreateDatabaseOptions>
-  ): Promise<void>;
-}
-
-export interface CreateDatabaseOptions {
-  ignoreIfExists: boolean;
-}
 
 export enum DatabaseKind {
   Postgres = 'POSTGRES'
@@ -31,6 +21,7 @@ export function createDatabaseClient(
   }
 }
 
-export { Postgres };
+export { DatabaseClient, Postgres };
 
 export * from './postgres';
+export * from './databaseClient';

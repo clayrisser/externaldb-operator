@@ -3,5 +3,6 @@ kind: ConnectionPostgres
 metadata:
   name: connectionpostgres-sample
 spec:
-  # Add fields here
-  foo: bar
+  hostname: localhost
+  password: postgres
+  username: postgres

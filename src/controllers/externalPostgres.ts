@@ -1,5 +1,5 @@
 import { ResourceMeta } from '@dot-i/k8s-operator';
-import { Postgres } from '~/databases';
+import { CreateDatabaseResult, Postgres } from '~/databases';
 import ExternalDatabase from './externalDatabase';
 import { ExternalPostgresResource, ConnectionPostgresResource } from '~/types';
 import ExternaldbOperator, {
@@ -13,30 +13,36 @@ export default class ExternalPostgres extends ExternalDatabase {
     resource: ExternalPostgresResource,
     _meta: ResourceMeta
   ): Promise<any> {
-    if (
-      !resource.spec?.name ||
-      !resource.spec.connection?.name ||
-      !resource.spec.connection.namespace
-    ) {
+    const namespace =
+      resource.spec?.connection?.namespace || resource.metadata?.namespace;
+    if (!resource.spec?.name || !resource.spec.connection?.name || !namespace) {
       return;
     }
     const connectionPostgres = (
       await this.customObjectsApi.getNamespacedCustomObject(
         ExternaldbOperator.resource2Group(ResourceGroup.Externaldb),
         ResourceVersion.V1alpha1,
-        resource.spec.connection.namespace,
+        namespace,
         ExternaldbOperator.kind2plural(ResourceKind.ConnectionPostgres),
         resource.spec.connection.name
       )
     ).body as ConnectionPostgresResource;
+    const database = connectionPostgres.spec?.database || 'postgres';
+    this.spinner.start(`creating database '${database}'`);
     const postgres = new Postgres({
       connectionString: connectionPostgres.spec?.url,
-      database: connectionPostgres.spec?.database,
-      host: connectionPostgres.spec?.hostname,
+      database,
+      host: connectionPostgres.spec?.hostname || 'localhost',
       password: connectionPostgres.spec?.password,
-      port: connectionPostgres.spec?.port,
+      port: connectionPostgres.spec?.port || 5432,
       user: connectionPostgres.spec?.username
     });
-    await postgres.createDatabase(resource.spec.name);
+    postgres.spinner = this.spinner;
+    const result = await postgres.createDatabase(resource.spec.name);
+    if (result === CreateDatabaseResult.AlreadyExists) {
+      this.spinner.warn(`database '${database}' already exists`);
+    } else {
+      this.spinner.succeed(`created database '${database}'`);
+    }
   }
 }
