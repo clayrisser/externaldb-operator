@@ -40,8 +40,8 @@ type ExternalMysqlSpec struct {
 
 // ExternalMysqlStatus defines the observed state of ExternalMysql
 type ExternalMysqlStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+        // database status (CREATING, DELETING, CREATED, ALREADY_EXISTS OR FAILED)
+        Database string `json:"database,omitempty"`
 }
 
 // +kubebuilder:object:root=true

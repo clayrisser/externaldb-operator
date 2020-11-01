@@ -24,6 +24,10 @@ export interface ExternalDatabaseSpec {
   name?: string; // string `json:"name,omitempty"`
 }
 
+export interface ExternalDatabaseStatus {
+  database?: ExternalDatabaseStatusDatabase; // string `json:"database,omitempty"`
+}
+
 export interface ConnectionMongoSpec extends ConnectionDatabaseSpec {}
 
 export interface ConnectionMysqlSpec extends ConnectionDatabaseSpec {}
@@ -35,6 +39,12 @@ export interface ExternalMongoSpec extends ExternalDatabaseSpec {}
 export interface ExternalMysqlSpec extends ExternalDatabaseSpec {}
 
 export interface ExternalPostgresSpec extends ExternalDatabaseSpec {}
+
+export interface ExternalMongoStatus extends ExternalDatabaseStatus {}
+
+export interface ExternalMysqlStatus extends ExternalDatabaseStatus {}
+
+export interface ExternalPostgresStatus extends ExternalDatabaseStatus {}
 
 export interface ConnectionMongoResource extends KubernetesObject {
   spec?: ConnectionMongoSpec;
@@ -50,12 +60,23 @@ export interface ConnectionPostgresResource extends KubernetesObject {
 
 export interface ExternalMongoResource extends KubernetesObject {
   spec?: ExternalMongoSpec;
+  status?: ExternalMongoStatus;
 }
 
 export interface ExternalMysqlResource extends KubernetesObject {
   spec?: ExternalMysqlSpec;
+  status?: ExternalMysqlStatus;
 }
 
 export interface ExternalPostgresResource extends KubernetesObject {
   spec?: ExternalPostgresSpec;
+  status?: ExternalPostgresStatus;
+}
+
+export enum ExternalDatabaseStatusDatabase {
+  AlreadyExists = 'EXISTS',
+  Created = 'CREATED',
+  Creating = 'CREATING',
+  Deleting = 'DELETING',
+  Failed = 'FAILED'
 }
