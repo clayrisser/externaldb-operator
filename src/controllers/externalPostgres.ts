@@ -26,7 +26,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
-    const { database, url } = this.getConnection(connectionResource);
+    const { database, url } = await this.getConnection(connectionResource);
     if (
       resource.status?.database !== ExternalDatabaseStatusDatabase.Created ||
       !resource.spec.cleanup
@@ -47,7 +47,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
-    const { database, url } = this.getConnection(connectionResource);
+    const { database, url } = await this.getConnection(connectionResource);
     const status = await this.getStatus(resource);
     if (status?.database) return;
     this.spinner.start(`creating database '${database}'`);
@@ -195,14 +195,70 @@ export default class ExternalPostgres extends ExternalDatabase {
     }
   }
 
-  getConnection(connectionResource: ConnectionPostgresResource) {
+  async getConnection(
+    connectionResource: ConnectionPostgresResource
+  ): Promise<Connection> {
+    let database = connectionResource.spec?.database;
+    let hostname = connectionResource.spec?.hostname;
+    let password = connectionResource.spec?.password;
+    let port = connectionResource.spec?.port;
+    let url = connectionResource.spec?.url;
+    let username = connectionResource.spec?.username;
+    if (
+      connectionResource.metadata?.namespace &&
+      connectionResource.spec?.configMapName
+    ) {
+      if (connectionResource.spec?.configMapName) {
+        try {
+          const configMap = (
+            await this.coreV1Api.readNamespacedConfigMap(
+              connectionResource.spec.configMapName,
+              connectionResource.metadata.namespace
+            )
+          ).body;
+          if (configMap.data?.POSTGRES_DATABASE) {
+            database = configMap.data.POSTGRES_DATABASE;
+          }
+          if (configMap.data?.POSTGRES_PORT) {
+            const postgresPort = Number(configMap.data.POSTGRES_PORT);
+            if (!isNaN(postgresPort)) port = postgresPort;
+          }
+          if (configMap.data?.POSTGRES_USERNAME) {
+            username = configMap.data.POSTGRES_USERNAME;
+          }
+          if (configMap.data?.POSTGRES_HOSTNAME) {
+            hostname = configMap.data.POSTGRES_HOSTNAME;
+          }
+        } catch (err) {
+          if (err.statusCode !== 404) throw err;
+        }
+      }
+      if (connectionResource.spec.secretName) {
+        try {
+          const secret = (
+            await this.coreV1Api.readNamespacedSecret(
+              connectionResource.spec.secretName,
+              connectionResource.metadata.namespace
+            )
+          ).body;
+          if (secret.stringData?.POSTGRES_PASSWORD) {
+            password = secret.stringData.POSTGRES_PASSWORD;
+          }
+          if (secret.stringData?.POSTGRES_URL) {
+            url = secret.stringData.POSTGRES_URL;
+          }
+        } catch (err) {
+          if (err.statusCode !== 404) throw err;
+        }
+      }
+    }
     return new Connection(
-      connectionResource.spec?.url || {
-        username: connectionResource.spec?.username || 'postgres',
-        password: connectionResource.spec?.password,
-        hostname: connectionResource.spec?.hostname,
-        port: connectionResource.spec?.port || 3306,
-        database: connectionResource.spec?.database || 'postgres'
+      url || {
+        username: username || 'postgres',
+        password,
+        hostname,
+        port: port || 3306,
+        database: database || 'postgres'
       }
     );
   }
@@ -218,7 +274,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     ) {
       return;
     }
-    const connection = this.getConnection(connectionResource);
+    const connection = await this.getConnection(connectionResource);
     const clonedConnection = new Connection({
       database: resource.spec.name,
       hostname: connection.hostname,

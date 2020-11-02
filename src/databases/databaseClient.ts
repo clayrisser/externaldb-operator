@@ -19,7 +19,7 @@ export interface CreateDatabaseOptions {
 }
 
 export enum CreateDatabaseResult {
-  AlreadyExists = 'AlreadyExists',
+  AlreadyExists = 'ALREADY_EXISTS',
   Created = 'CREATED'
 }
 
