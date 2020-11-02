@@ -3,7 +3,7 @@ kind: ExternalPostgres
 metadata:
   name: externalpostgres-sample
 spec:
-  cleanup: false
+  cleanup: true
   name: helloworld
   connection:
     name: connectionpostgres-sample

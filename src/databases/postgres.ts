@@ -1,7 +1,8 @@
 import { Client, ClientConfig } from 'pg';
 import DatabaseClient, {
   CreateDatabaseOptions,
-  CreateDatabaseResult
+  CreateDatabaseResult,
+  DropDatabaseOptions
 } from './databaseClient';
 
 export default class Postgres extends DatabaseClient {
@@ -16,6 +17,7 @@ export default class Postgres extends DatabaseClient {
     databaseName: string,
     createDatabaseOptions: Partial<CreateDatabaseOptions> = {}
   ): Promise<CreateDatabaseResult> {
+    this.assertDatabaseName(databaseName);
     const { ignoreIfExists }: CreateDatabaseOptions = {
       ignoreIfExists: true,
       ...createDatabaseOptions
@@ -35,5 +37,21 @@ export default class Postgres extends DatabaseClient {
     }
     await this.client.end();
     return CreateDatabaseResult.Created;
+  }
+
+  async dropDatabase(
+    databaseName: string,
+    _dropDatabaseOptions: Partial<DropDatabaseOptions> = {}
+  ): Promise<void> {
+    this.assertDatabaseName(databaseName);
+    await this.client.connect();
+    await this.client.query(`DROP DATABASE ${databaseName}`);
+    await this.client.end();
+  }
+
+  assertDatabaseName(databaseName: string) {
+    if (!/^[^\d][\w_]+$/g.test(databaseName)) {
+      throw new Error(`database name '${databaseName}' is invalid`);
+    }
   }
 }

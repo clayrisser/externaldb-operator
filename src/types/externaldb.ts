@@ -74,7 +74,7 @@ export interface ExternalPostgresResource extends KubernetesObject {
 }
 
 export enum ExternalDatabaseStatusDatabase {
-  AlreadyExists = 'EXISTS',
+  AlreadyExists = 'ALREADY_EXISTS',
   Created = 'CREATED',
   Creating = 'CREATING',
   Deleting = 'DELETING',

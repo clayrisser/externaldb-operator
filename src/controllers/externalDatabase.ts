@@ -6,8 +6,8 @@ export default abstract class ExternalDatabase extends Controller {
 
   kubeConfig: k8s.KubeConfig;
 
-  constructor() {
-    super();
+  constructor(groupnameprefix: string, kind: string) {
+    super(groupnameprefix, kind);
     this.kubeConfig = new k8s.KubeConfig();
     this.kubeConfig.loadFromDefault();
     this.customObjectsApi = this.kubeConfig.makeApiClient(k8s.CustomObjectsApi);

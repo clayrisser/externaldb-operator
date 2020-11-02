@@ -1,9 +1,17 @@
 import ora from 'ora';
 import { KubernetesObject } from '@kubernetes/client-node';
 import { ResourceMeta } from '@dot-i/k8s-operator';
+import { getGroupName, kind2plural } from '~/util';
 
 export default abstract class Controller {
-  constructor() {}
+  constructor(protected groupNamePrefix: string, protected kind: string) {
+    this.group = getGroupName(this.groupNamePrefix);
+    this.plural = kind2plural(this.kind);
+  }
+
+  protected group: string;
+
+  protected plural: string;
 
   spinner = ora();
 

@@ -1,11 +1,8 @@
 import Operator, { ResourceEventType } from '@dot-i/k8s-operator';
-import YAML from 'yaml';
-import fs from 'fs-extra';
 import ora from 'ora';
-import path from 'path';
 import Logger from './logger';
 import { Config } from './config';
-import { OperatorFrameworkProject } from './types';
+import { getGroupName, kind2plural } from './util';
 import {
   ConnectionMongo,
   ConnectionMysql,
@@ -15,10 +12,6 @@ import {
   ExternalMysql,
   ExternalPostgres
 } from './controllers';
-
-export const project: OperatorFrameworkProject = YAML.parse(
-  fs.readFileSync(path.resolve(__dirname, '../PROJECT')).toString()
-);
 
 export default class ExternaldbOperator extends Operator {
   static labelNamespace = 'dev.siliconhills.helm2cattle';
@@ -30,15 +23,42 @@ export default class ExternaldbOperator extends Operator {
   }
 
   protected async init() {
-    this.watchController(ResourceKind.ConnectionMongo, new ConnectionMongo());
-    this.watchController(ResourceKind.ConnectionMysql, new ConnectionMysql());
+    this.watchController(
+      ResourceKind.ConnectionMongo,
+      new ConnectionMongo(
+        ResourceGroup.Externaldb,
+        ResourceKind.ConnectionMongo
+      )
+    );
+    this.watchController(
+      ResourceKind.ConnectionMysql,
+      new ConnectionMysql(
+        ResourceGroup.Externaldb,
+        ResourceKind.ConnectionMysql
+      )
+    );
     this.watchController(
       ResourceKind.ConnectionPostgres,
-      new ConnectionPostgres()
+      new ConnectionPostgres(
+        ResourceGroup.Externaldb,
+        ResourceKind.ConnectionPostgres
+      )
     );
-    this.watchController(ResourceKind.ExternalMongo, new ExternalMongo());
-    this.watchController(ResourceKind.ExternalMysql, new ExternalMysql());
-    this.watchController(ResourceKind.ExternalPostgres, new ExternalPostgres());
+    this.watchController(
+      ResourceKind.ExternalMongo,
+      new ExternalMongo(ResourceGroup.Externaldb, ResourceKind.ExternalMongo)
+    );
+    this.watchController(
+      ResourceKind.ExternalMysql,
+      new ExternalMysql(ResourceGroup.Externaldb, ResourceKind.ExternalMysql)
+    );
+    this.watchController(
+      ResourceKind.ExternalPostgres,
+      new ExternalPostgres(
+        ResourceGroup.Externaldb,
+        ResourceKind.ExternalPostgres
+      )
+    );
   }
 
   protected watchController(
@@ -46,9 +66,9 @@ export default class ExternaldbOperator extends Operator {
     controller: Controller
   ) {
     this.watchResource(
-      ExternaldbOperator.resource2Group(ResourceGroup.Externaldb),
+      getGroupName(ResourceGroup.Externaldb),
       ResourceVersion.V1alpha1,
-      ExternaldbOperator.kind2plural(resourceKind),
+      kind2plural(resourceKind),
       async (e) => {
         try {
           switch (e.type) {
@@ -76,21 +96,6 @@ export default class ExternaldbOperator extends Operator {
         }
       }
     ).catch(console.error);
-  }
-
-  static resource2Group(group: string) {
-    return `${group}.${project.domain}`;
-  }
-
-  static kind2plural(kind: string) {
-    let lowercasedKind = kind.toLowerCase();
-    if (lowercasedKind[lowercasedKind.length - 1] === 's') {
-      return lowercasedKind;
-    }
-    if (lowercasedKind[lowercasedKind.length - 1] === 'o') {
-      lowercasedKind = `${lowercasedKind}e`;
-    }
-    return `${lowercasedKind}s`;
   }
 }
 

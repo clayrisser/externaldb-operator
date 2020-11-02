@@ -7,6 +7,11 @@ export default abstract class DatabaseClient {
     databaseName: string,
     createDatabaseOptions?: Partial<CreateDatabaseOptions>
   ): Promise<CreateDatabaseResult>;
+
+  abstract async dropDatabase(
+    databaseName: string,
+    dropDatabaseOptions?: Partial<DropDatabaseOptions>
+  ): Promise<void>;
 }
 
 export interface CreateDatabaseOptions {
@@ -17,3 +22,5 @@ export enum CreateDatabaseResult {
   AlreadyExists = 'AlreadyExists',
   Created = 'CREATED'
 }
+
+export interface DropDatabaseOptions {}
