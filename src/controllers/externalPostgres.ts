@@ -1,4 +1,5 @@
 import { ResourceMeta } from '@dot-i/k8s-operator';
+import Connection from '~/connection';
 import { CreateDatabaseResult, Postgres } from '~/databases';
 import { kind2plural, getGroupName } from '~/util';
 import {
@@ -23,24 +24,17 @@ export default class ExternalPostgres extends ExternalDatabase {
     _meta: ResourceMeta
   ): Promise<any> {
     if (!resource.spec?.name) return;
-    const connectionPostgres = await this.getConnection(resource);
-    if (!connectionPostgres) return;
+    const connectionResource = await this.getConnectionResource(resource);
+    if (!connectionResource?.spec?.password) return;
+    const { database, url } = this.getConnection(connectionResource);
     if (
       resource.status?.database !== ExternalDatabaseStatusDatabase.Created ||
       !resource.spec.cleanup
     ) {
       return;
     }
-    const database = connectionPostgres.spec?.database || 'postgres';
     this.spinner.start(`dropping database '${database}'`);
-    const postgres = new Postgres({
-      connectionString: connectionPostgres.spec?.url,
-      database,
-      host: connectionPostgres.spec?.hostname || 'localhost',
-      password: connectionPostgres.spec?.password,
-      port: connectionPostgres.spec?.port || 5432,
-      user: connectionPostgres.spec?.username
-    });
+    const postgres = new Postgres({ connectionString: url });
     postgres.spinner = this.spinner;
     await postgres.dropDatabase(resource.spec.name);
     this.spinner.succeed(`dropped database '${database}'`);
@@ -51,11 +45,11 @@ export default class ExternalPostgres extends ExternalDatabase {
     _meta: ResourceMeta
   ): Promise<any> {
     if (!resource.spec?.name) return;
-    const connectionPostgres = await this.getConnection(resource);
-    if (!connectionPostgres) return;
+    const connectionResource = await this.getConnectionResource(resource);
+    if (!connectionResource?.spec?.password) return;
+    const { database, url } = this.getConnection(connectionResource);
     const status = await this.getStatus(resource);
     if (status?.database) return;
-    const database = connectionPostgres.spec?.database || 'postgres';
     this.spinner.start(`creating database '${database}'`);
     try {
       await this.updateStatus(
@@ -64,14 +58,7 @@ export default class ExternalPostgres extends ExternalDatabase {
         },
         resource
       );
-      const postgres = new Postgres({
-        connectionString: connectionPostgres.spec?.url,
-        database,
-        host: connectionPostgres.spec?.hostname || 'localhost',
-        password: connectionPostgres.spec?.password,
-        port: connectionPostgres.spec?.port || 5432,
-        user: connectionPostgres.spec?.username
-      });
+      const postgres = new Postgres({ connectionString: url });
       postgres.spinner = this.spinner;
       const result = await postgres.createDatabase(resource.spec.name);
       if (result === CreateDatabaseResult.AlreadyExists) {
@@ -81,7 +68,7 @@ export default class ExternalPostgres extends ExternalDatabase {
       }
       await this.createOrUpdateConnectionResources(
         resource,
-        connectionPostgres
+        connectionResource
       );
       if (resource.spec.kustomization) await this.applyKustomization(resource);
       await this.updateStatus(
@@ -180,7 +167,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     );
   }
 
-  async getConnection(
+  async getConnectionResource(
     resource: ExternalPostgresResource
   ): Promise<ConnectionPostgresResource | undefined> {
     if (
@@ -208,6 +195,18 @@ export default class ExternalPostgres extends ExternalDatabase {
     }
   }
 
+  getConnection(connectionResource: ConnectionPostgresResource) {
+    return new Connection(
+      connectionResource.spec?.url || {
+        username: connectionResource.spec?.username || 'postgres',
+        password: connectionResource.spec?.password,
+        hostname: connectionResource.spec?.hostname,
+        port: connectionResource.spec?.port || 3306,
+        database: connectionResource.spec?.database || 'postgres'
+      }
+    );
+  }
+
   async createOrUpdateConnectionResources(
     resource: ExternalPostgresResource,
     connectionResource: ConnectionPostgresResource
@@ -219,23 +218,33 @@ export default class ExternalPostgres extends ExternalDatabase {
     ) {
       return;
     }
+    const connection = this.getConnection(connectionResource);
+    const clonedConnection = new Connection({
+      database: resource.spec.name,
+      hostname: connection.hostname,
+      password: connection.password,
+      port: connection.port,
+      username: connection.username
+    });
+    const {
+      database,
+      hostname,
+      password,
+      port,
+      url,
+      username
+    } = clonedConnection;
     const configMapName = resource.spec.configMapName || resource.metadata.name;
     const secretName = resource.spec.secretName || resource.metadata.name;
     const configMap = {
-      PORT: (connectionResource.spec?.port || 5432).toString(),
-      USERNAME: connectionResource.spec?.username || 'postgres',
-      ...(resource.spec.name ? { DATABASE: resource.spec.name } : {}),
-      ...(connectionResource.spec?.hostname
-        ? { HOSTNAME: connectionResource.spec.hostname }
-        : {})
+      PORT: (port || 5432).toString(),
+      USERNAME: username || 'postgres',
+      ...(database ? { DATABASE: database } : {}),
+      ...(hostname ? { HOSTNAME: hostname } : {})
     };
     const secret = {
-      ...(connectionResource.spec?.password
-        ? { PASSWORD: connectionResource.spec.password }
-        : {}),
-      ...(connectionResource.spec?.url
-        ? { URL: connectionResource.spec.url }
-        : {})
+      ...(password ? { PASSWORD: password } : {}),
+      ...(url ? { URL: url } : {})
     };
     try {
       await this.coreV1Api.readNamespacedSecret(
