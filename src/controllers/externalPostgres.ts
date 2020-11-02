@@ -2,11 +2,11 @@ import { ResourceMeta } from '@dot-i/k8s-operator';
 import { CreateDatabaseResult, Postgres } from '~/databases';
 import { kind2plural, getGroupName } from '~/util';
 import {
-  ExternalPostgresResource,
   ConnectionPostgresResource,
-  KustomizationResource,
+  ExternalDatabaseStatusDatabase,
+  ExternalPostgresResource,
   ExternalPostgresStatus,
-  ExternalDatabaseStatusDatabase
+  KustomizationResource
 } from '~/types';
 import {
   KustomizeResourceGroup,
@@ -79,6 +79,10 @@ export default class ExternalPostgres extends ExternalDatabase {
       } else {
         this.spinner.succeed(`created database '${database}'`);
       }
+      await this.createOrUpdateConnectionResources(
+        resource,
+        connectionPostgres
+      );
       if (resource.spec.kustomization) await this.applyKustomization(resource);
       await this.updateStatus(
         {
@@ -110,21 +114,6 @@ export default class ExternalPostgres extends ExternalDatabase {
         kind2plural(KustomizeResourceKind.Kustomization),
         resource.metadata.name
       );
-      const kustomizationResource: KustomizationResource = {
-        metadata: {
-          name: resource.metadata.name,
-          namespace: resource.metadata.namespace
-        },
-        spec: resource.spec?.kustomization
-      };
-      await this.customObjectsApi.createNamespacedCustomObject(
-        getGroupName(KustomizeResourceGroup.Kustomize),
-        KustomizeResourceVersion.V1alpha1,
-        resource.metadata.namespace,
-        kind2plural(KustomizeResourceKind.Kustomization),
-        kustomizationResource
-      );
-    } catch (err) {
       await this.customObjectsApi.patchNamespacedCustomObject(
         getGroupName(KustomizeResourceGroup.Kustomize),
         KustomizeResourceVersion.V1alpha1,
@@ -144,6 +133,21 @@ export default class ExternalPostgres extends ExternalDatabase {
         {
           headers: { 'Content-Type': 'application/json-patch+json' }
         }
+      );
+    } catch (err) {
+      const kustomizationResource: KustomizationResource = {
+        metadata: {
+          name: resource.metadata.name,
+          namespace: resource.metadata.namespace
+        },
+        spec: resource.spec?.kustomization
+      };
+      await this.customObjectsApi.createNamespacedCustomObject(
+        getGroupName(KustomizeResourceGroup.Kustomize),
+        KustomizeResourceVersion.V1alpha1,
+        resource.metadata.namespace,
+        kind2plural(KustomizeResourceKind.Kustomization),
+        kustomizationResource
       );
     }
   }
@@ -197,6 +201,104 @@ export default class ExternalPostgres extends ExternalDatabase {
       )
     ).body as ConnectionPostgresResource;
     return connectionPostgres;
+  }
+
+  async createOrUpdateConnectionResources(
+    resource: ExternalPostgresResource,
+    connectionResource: ConnectionPostgresResource
+  ): Promise<void> {
+    if (
+      !resource.metadata?.name ||
+      !resource.metadata.namespace ||
+      !resource.spec?.name
+    ) {
+      return;
+    }
+    const configMapName = resource.metadata.name;
+    const secretName = resource.metadata.name;
+    const configMap = {
+      PORT: (connectionResource.spec?.port || 5432).toString(),
+      USERNAME: connectionResource.spec?.username || 'postgres',
+      ...(resource.spec.name ? { DATABASE: resource.spec.name } : {}),
+      ...(connectionResource.spec?.hostname
+        ? { HOSTNAME: connectionResource.spec.hostname }
+        : {})
+    };
+    const secret = {
+      ...(connectionResource.spec?.password
+        ? { PASSWORD: connectionResource.spec.password }
+        : {}),
+      ...(connectionResource.spec?.url
+        ? { URL: connectionResource.spec.url }
+        : {})
+    };
+    try {
+      await this.coreV1Api.readNamespacedSecret(
+        secretName,
+        resource.metadata.namespace
+      );
+      await this.coreV1Api.patchNamespacedSecret(
+        secretName,
+        resource.metadata.namespace,
+        [
+          {
+            op: 'replace',
+            path: '/stringData',
+            value: secret
+          }
+        ],
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          headers: { 'Content-Type': 'application/json-patch+json' }
+        }
+      );
+    } catch (err) {
+      await this.coreV1Api.createNamespacedSecret(resource.metadata.namespace, {
+        metadata: {
+          name: secretName,
+          namespace: resource.metadata.namespace
+        },
+        stringData: secret
+      });
+    }
+    try {
+      await this.coreV1Api.readNamespacedConfigMap(
+        configMapName,
+        resource.metadata.namespace
+      );
+      await this.coreV1Api.patchNamespacedConfigMap(
+        configMapName,
+        resource.metadata.namespace,
+        [
+          {
+            op: 'replace',
+            path: '/data',
+            value: configMap
+          }
+        ],
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        {
+          headers: { 'Content-Type': 'application/json-patch+json' }
+        }
+      );
+    } catch (err) {
+      await this.coreV1Api.createNamespacedConfigMap(
+        resource.metadata.namespace,
+        {
+          metadata: {
+            name: configMapName,
+            namespace: resource.metadata.namespace
+          },
+          data: configMap
+        }
+      );
+    }
   }
 
   async getStatus(
