@@ -42,6 +42,11 @@ spec:
                 cleanup will delete the database when the ExternalMysql
                 resource is deleted
               type: boolean
+            configMapName:
+              description:
+                name of generated config map containing `MYSQL_HOSTNAME`,
+                `MYSQL_PORT`, `MYSQL_USERNAME` or `MYSQL_DATABASE`
+              type: string
             connection:
               description: connection mysql resource
               properties:
@@ -524,6 +529,11 @@ spec:
               type: object
             name:
               description: name is the name of the database to create
+              type: string
+            secretName:
+              description:
+                name of generated secret containing `MYSQL_PASSWORD` or
+                `MYSQL_CONNECITON_URL`
               type: string
           type: object
         status:

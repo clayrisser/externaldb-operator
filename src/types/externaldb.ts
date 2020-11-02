@@ -18,6 +18,8 @@ export interface DatabaseConnection {
 }
 
 export interface ExternalDatabaseSpec {
+  configMapName?: string; // string `json:"configMapName,omitempty"`
+  secretName?: string; // string `json:"secretName,omitempty"`
   cleanup?: boolean; // bool `json:"cleanup,omitempty"`
   connection?: DatabaseConnection; // DatabaseConnection `json:"connection,omitempty"`
   kustomization?: KustomizationSpec; // KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`

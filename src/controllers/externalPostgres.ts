@@ -135,6 +135,7 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       );
     } catch (err) {
+      if (err.statusCode !== 404) throw err;
       const kustomizationResource: KustomizationResource = {
         metadata: {
           name: resource.metadata.name,
@@ -191,16 +192,20 @@ export default class ExternalPostgres extends ExternalDatabase {
     }
     const namespace =
       resource.spec?.connection?.namespace || resource.metadata.namespace;
-    const connectionPostgres = (
-      await this.customObjectsApi.getNamespacedCustomObject(
-        this.group,
-        ResourceVersion.V1alpha1,
-        namespace,
-        kind2plural(ResourceKind.ConnectionPostgres),
-        resource.spec.connection.name
-      )
-    ).body as ConnectionPostgresResource;
-    return connectionPostgres;
+    try {
+      const connectionPostgres = (
+        await this.customObjectsApi.getNamespacedCustomObject(
+          this.group,
+          ResourceVersion.V1alpha1,
+          namespace,
+          kind2plural(ResourceKind.ConnectionPostgres),
+          resource.spec.connection.name
+        )
+      ).body as ConnectionPostgresResource;
+      return connectionPostgres;
+    } catch (err) {
+      if (err.statusCode !== 404) throw err;
+    }
   }
 
   async createOrUpdateConnectionResources(
@@ -214,8 +219,8 @@ export default class ExternalPostgres extends ExternalDatabase {
     ) {
       return;
     }
-    const configMapName = resource.metadata.name;
-    const secretName = resource.metadata.name;
+    const configMapName = resource.spec.configMapName || resource.metadata.name;
+    const secretName = resource.spec.secretName || resource.metadata.name;
     const configMap = {
       PORT: (connectionResource.spec?.port || 5432).toString(),
       USERNAME: connectionResource.spec?.username || 'postgres',
@@ -256,6 +261,7 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       );
     } catch (err) {
+      if (err.statusCode !== 404) throw err;
       await this.coreV1Api.createNamespacedSecret(resource.metadata.namespace, {
         metadata: {
           name: secretName,
@@ -288,6 +294,7 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       );
     } catch (err) {
+      if (err.statusCode !== 404) throw err;
       await this.coreV1Api.createNamespacedConfigMap(
         resource.metadata.namespace,
         {

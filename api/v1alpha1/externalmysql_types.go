@@ -36,6 +36,12 @@ type ExternalMysqlSpec struct {
 
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
+
+	// name of generated secret containing `MYSQL_PASSWORD` or `MYSQL_CONNECITON_URL`
+	SecretName string `json:"secretName,omitempty"`
+
+	// name of generated config map containing `MYSQL_HOSTNAME`, `MYSQL_PORT`, `MYSQL_USERNAME` or `MYSQL_DATABASE`
+	ConfigMapName string `json:"configMapName,omitempty"`
 }
 
 // ExternalMysqlStatus defines the observed state of ExternalMysql

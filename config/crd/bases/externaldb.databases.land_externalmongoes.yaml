@@ -42,6 +42,11 @@ spec:
                 cleanup will delete the database when the ExternalMongo
                 resource is deleted
               type: boolean
+            configMapName:
+              description:
+                name of generated config map containing `MONGO_HOSTNAME`,
+                `MONGO_PORT`, `MONGO_USERNAME` or `MONGO_DATABASE`
+              type: string
             connection:
               description: connection mongo resource
               properties:
@@ -524,6 +529,11 @@ spec:
               type: object
             name:
               description: name is the name of the database to create
+              type: string
+            secretName:
+              description:
+                name of generated secret containing `MONGO_PASSWORD` or
+                `MONGO_CONNECITON_URL`
               type: string
           type: object
         status:

@@ -36,6 +36,12 @@ type ExternalMongoSpec struct {
 
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
+
+	// name of generated secret containing `MONGO_PASSWORD` or `MONGO_CONNECITON_URL`
+	SecretName string `json:"secretName,omitempty"`
+
+	// name of generated config map containing `MONGO_HOSTNAME`, `MONGO_PORT`, `MONGO_USERNAME` or `MONGO_DATABASE`
+	ConfigMapName string `json:"configMapName,omitempty"`
 }
 
 // ExternalMongoStatus defines the observed state of ExternalMongo

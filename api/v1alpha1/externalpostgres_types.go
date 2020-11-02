@@ -36,6 +36,12 @@ type ExternalPostgresSpec struct {
 
 	// kustomization to apply after success
 	Kustomization KustomizationSpec `json:"kustomization,omitempty" yaml:"kustomization,omitempty"`
+
+	// name of generated secret containing `POSTGRES_PASSWORD` or `POSTGRES_CONNECITON_URL`
+	SecretName string `json:"secretName,omitempty"`
+
+	// name of generated config map containing `POSTGRES_HOSTNAME`, `POSTGRES_PORT`, `POSTGRES_USERNAME` or `POSTGRES_DATABASE`
+	ConfigMapName string `json:"configMapName,omitempty"`
 }
 
 // ExternalPostgresStatus defines the observed state of ExternalPostgres
