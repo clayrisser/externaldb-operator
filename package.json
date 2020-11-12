@@ -6,17 +6,20 @@
   "keywords": [
     "externaldb-operator"
   ],
-  "homepage": "https://github.com/codejamninja/externaldb-operator",
+  "homepage": "https://github.com/silicon-hills/externaldb-operator",
   "bugs": {
-    "url": "https://github.com/codejamninja/externaldb-operator/issues",
-    "email": "jam@codejam.ninja"
+    "url": "https://github.com/silicon-hills/externaldb-operator/issues",
+    "email": "hello@nuevesolutions.org"
   },
-  "license": "MIT",
+  "license": "Apache-2.0",
   "author": {
-    "name": "Jam Risser",
-    "email": "jam@codejam.ninja",
-    "url": "https://codejam.ninja"
+    "name": "Silicon Hills LLC",
+    "email": "hello@nuevesolutions.org",
+    "url": "https://nuevesolutions.org"
   },
+  "contributors": [
+    "Jam Risser <jam@codejam.ninja> (https://codejam.ninja)"
+  ],
   "bin": {
     "externaldb-operator": "bin/externaldbOperator.js"
   },
