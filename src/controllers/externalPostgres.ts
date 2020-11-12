@@ -254,11 +254,12 @@ export default class ExternalPostgres extends ExternalDatabase {
     }
     return new Connection(
       url || {
-        username: username || 'postgres',
-        password,
+        database: database || 'postgres',
         hostname,
+        password,
         port: port || 3306,
-        database: database || 'postgres'
+        protocol: 'postgres',
+        username: username || 'postgres'
       }
     );
   }
