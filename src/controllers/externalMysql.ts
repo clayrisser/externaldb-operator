@@ -15,7 +15,7 @@
  */
 
 import { ResourceMeta } from '@dot-i/k8s-operator';
-import Connection from '~/connection';
+import Connection, { Protocol } from '~/connection';
 import { CreateDatabaseResult, Mysql } from '~/databases';
 import { kind2plural, getGroupName } from '~/util';
 import {
@@ -274,7 +274,7 @@ export default class ExternalMysql extends ExternalDatabase {
         hostname,
         password,
         port: port || 3306,
-        protocol: 'mysql',
+        protocol: Protocol.Mysql,
         username: username || 'mysql'
       }
     );
@@ -297,6 +297,7 @@ export default class ExternalMysql extends ExternalDatabase {
       hostname: connection.hostname,
       password: connection.password,
       port: connection.port,
+      protocol: Protocol.Mysql,
       username: connection.username
     });
     const {

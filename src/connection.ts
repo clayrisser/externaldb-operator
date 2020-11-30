@@ -183,6 +183,6 @@ export type Port = number | null;
 
 export enum Protocol {
   Mysql = 'mysql',
-  Postgres = 'postgres',
+  Postgres = 'psql',
   MongoDB = 'mongodb'
 }
