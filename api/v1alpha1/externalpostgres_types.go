@@ -46,8 +46,17 @@ type ExternalPostgresSpec struct {
 
 // ExternalPostgresStatus defines the observed state of ExternalPostgres
 type ExternalPostgresStatus struct {
-        // database status (CREATING, DELETING, CREATED, ALREADY_EXISTS OR FAILED)
+        // database status (Creating, Deleting, Created, AlreadyExists or Failed)
         Database string `json:"database,omitempty"`
+
+        // external postgres message
+        Message string `json:"message,omitempty"`
+
+        // external postgres phase (Pending, Succeeded, Failed, Unknown)
+        Phase string `json:"phase,omitempty"`
+
+        // external postgres ready
+        Ready bool `json:"ready,omitempty"`
 }
 
 // +kubebuilder:object:root=true

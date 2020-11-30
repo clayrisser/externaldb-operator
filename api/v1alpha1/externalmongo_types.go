@@ -46,8 +46,17 @@ type ExternalMongoSpec struct {
 
 // ExternalMongoStatus defines the observed state of ExternalMongo
 type ExternalMongoStatus struct {
-        // database status (CREATING, DELETING, CREATED, ALREADY_EXISTS OR FAILED)
+        // database status (Creating, Deleting, Created, AlreadyExists or Failed)
         Database string `json:"database,omitempty"`
+
+        // external mongo message
+        Message string `json:"message,omitempty"`
+
+        // external mongo phase (Pending, Succeeded, Failed, Unknown)
+        Phase string `json:"phase,omitempty"`
+
+        // external mongo ready
+        Ready bool `json:"ready,omitempty"`
 }
 
 // +kubebuilder:object:root=true

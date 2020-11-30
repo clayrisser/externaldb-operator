@@ -44,6 +44,9 @@ export interface ExternalDatabaseSpec {
 
 export interface ExternalDatabaseStatus {
   database?: ExternalDatabaseStatusDatabase; // string `json:"database,omitempty"`
+  message?: string; // string `json:"message,omitempty"`
+  phase?: ExternalDatabaseStatusPhase; // string `json:"phase,omitempty"`
+  ready?: boolean; // bool `json:"ready,omitempty"`
 }
 
 export interface ConnectionMongoSpec extends ConnectionDatabaseSpec {}
@@ -94,11 +97,11 @@ export interface ExternalPostgresResource extends KubernetesObject {
 }
 
 export enum ExternalDatabaseStatusDatabase {
-  AlreadyExists = 'ALREADY_EXISTS',
-  Created = 'CREATED',
-  Creating = 'CREATING',
-  Deleting = 'DELETING',
-  Failed = 'FAILED'
+  AlreadyExists = 'AlreadyExists',
+  Created = 'Created',
+  Creating = 'Creating',
+  Deleting = 'Deleting',
+  Failed = 'Failed'
 }
 
 export enum PostgresSslMode {
@@ -109,4 +112,11 @@ export enum PostgresSslMode {
   Require = 'require',
   VerifyCa = 'verify-ca',
   VerifyFull = 'verify-full'
+}
+
+export enum ExternalDatabaseStatusPhase {
+  Failed = 'Failed',
+  Pending = 'Pending',
+  Succeeded = 'Succeeded',
+  Unknown = 'Unknown'
 }

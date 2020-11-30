@@ -46,8 +46,17 @@ type ExternalMysqlSpec struct {
 
 // ExternalMysqlStatus defines the observed state of ExternalMysql
 type ExternalMysqlStatus struct {
-        // database status (CREATING, DELETING, CREATED, ALREADY_EXISTS OR FAILED)
+        // database status (Creating, Deleting, Created, AlreadyExists or Failed)
         Database string `json:"database,omitempty"`
+
+        // external mysql message
+        Message string `json:"message,omitempty"`
+
+        // external mysql phase (Pending, Succeeded, Failed, Unknown)
+        Phase string `json:"phase,omitempty"`
+
+        // external mysql ready
+        Ready bool `json:"ready,omitempty"`
 }
 
 // +kubebuilder:object:root=true

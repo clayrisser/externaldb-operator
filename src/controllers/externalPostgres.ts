@@ -21,6 +21,7 @@ import { kind2plural, getGroupName } from '~/util';
 import {
   ConnectionPostgresResource,
   ExternalDatabaseStatusDatabase,
+  ExternalDatabaseStatusPhase,
   ExternalPostgresResource,
   ExternalPostgresStatus,
   KustomizationResource,
@@ -74,7 +75,10 @@ export default class ExternalPostgres extends ExternalDatabase {
     try {
       await this.updateStatus(
         {
-          database: ExternalDatabaseStatusDatabase.Creating
+          database: ExternalDatabaseStatusDatabase.Creating,
+          message: 'creating postgres',
+          phase: ExternalDatabaseStatusPhase.Pending,
+          ready: false
         },
         resource
       );
@@ -96,6 +100,9 @@ export default class ExternalPostgres extends ExternalDatabase {
       if (resource.spec.kustomization) await this.applyKustomization(resource);
       await this.updateStatus(
         {
+          message: 'created postgres',
+          phase: ExternalDatabaseStatusPhase.Succeeded,
+          ready: true,
           database:
             result === CreateDatabaseResult.AlreadyExists
               ? ExternalDatabaseStatusDatabase.AlreadyExists
@@ -106,7 +113,10 @@ export default class ExternalPostgres extends ExternalDatabase {
     } catch (err) {
       await this.updateStatus(
         {
-          database: ExternalDatabaseStatusDatabase.Failed
+          database: ExternalDatabaseStatusDatabase.Failed,
+          message: err.message?.toString() || '',
+          phase: ExternalDatabaseStatusPhase.Failed,
+          ready: false
         },
         resource
       );
@@ -316,7 +326,7 @@ export default class ExternalPostgres extends ExternalDatabase {
       protocol: Protocol.Postgres,
       username: connection.username,
       options: {
-        ...(connection.options?.sslmode === PostgresSslMode.AllowUnauthorized
+        ...(typeof connection.options?.sslmode === 'undefined'
           ? {}
           : {
               sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
@@ -326,22 +336,30 @@ export default class ExternalPostgres extends ExternalDatabase {
     const {
       database,
       hostname,
+      options,
       password,
       port,
       url,
       username
     } = clonedConnection;
-    const configMapName = resource.spec.configMapName || resource.metadata.name;
-    const secretName = resource.spec.secretName || resource.metadata.name;
+    const configMapName =
+      resource.spec.configMapName || `${resource.metadata.name}-externaldb`;
+    const secretName =
+      resource.spec.secretName || `${resource.metadata.name}-externaldb`;
     const configMap = {
-      PORT: (port || 5432).toString(),
-      USERNAME: username || 'postgres',
-      ...(database ? { DATABASE: database } : {}),
-      ...(hostname ? { HOSTNAME: hostname } : {})
+      POSTGRES_PORT: (port || 5432).toString(),
+      POSTGRES_USERNAME: username || 'postgres',
+      ...(database ? { POSTGRES_DATABASE: database } : {}),
+      ...(hostname ? { POSTGRES_HOSTNAME: hostname } : {}),
+      ...(typeof options?.sslmode === 'undefined'
+        ? {}
+        : {
+            POSTGRES_SSLMODE: options?.sslmode
+          })
     };
     const secret = {
-      ...(password ? { PASSWORD: password } : {}),
-      ...(url ? { URL: url } : {})
+      ...(password ? { POSTGRES_PASSWORD: password } : {}),
+      ...(url ? { POSTGRES_URL: url } : {})
     };
     try {
       await this.coreV1Api.readNamespacedSecret(

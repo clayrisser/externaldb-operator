@@ -21,6 +21,7 @@ import { kind2plural, getGroupName } from '~/util';
 import {
   ConnectionMysqlResource,
   ExternalDatabaseStatusDatabase,
+  ExternalDatabaseStatusPhase,
   ExternalMysqlResource,
   ExternalMysqlStatus,
   KustomizationResource
@@ -70,7 +71,10 @@ export default class ExternalMysql extends ExternalDatabase {
     try {
       await this.updateStatus(
         {
-          database: ExternalDatabaseStatusDatabase.Creating
+          database: ExternalDatabaseStatusDatabase.Creating,
+          message: 'creating mysql',
+          phase: ExternalDatabaseStatusPhase.Pending,
+          ready: false
         },
         resource
       );
@@ -89,6 +93,9 @@ export default class ExternalMysql extends ExternalDatabase {
       if (resource.spec.kustomization) await this.applyKustomization(resource);
       await this.updateStatus(
         {
+          message: 'created mysql',
+          phase: ExternalDatabaseStatusPhase.Succeeded,
+          ready: true,
           database:
             result === CreateDatabaseResult.AlreadyExists
               ? ExternalDatabaseStatusDatabase.AlreadyExists
@@ -99,7 +106,10 @@ export default class ExternalMysql extends ExternalDatabase {
     } catch (err) {
       await this.updateStatus(
         {
-          database: ExternalDatabaseStatusDatabase.Failed
+          database: ExternalDatabaseStatusDatabase.Failed,
+          message: err.message?.toString() || '',
+          phase: ExternalDatabaseStatusPhase.Failed,
+          ready: false
         },
         resource
       );
@@ -308,17 +318,19 @@ export default class ExternalMysql extends ExternalDatabase {
       url,
       username
     } = clonedConnection;
-    const configMapName = resource.spec.configMapName || resource.metadata.name;
-    const secretName = resource.spec.secretName || resource.metadata.name;
+    const configMapName =
+      resource.spec.configMapName || `${resource.metadata.name}-externaldb`;
+    const secretName =
+      resource.spec.secretName || `${resource.metadata.name}-externaldb`;
     const configMap = {
-      PORT: (port || 5432).toString(),
-      USERNAME: username || 'mysql',
-      ...(database ? { DATABASE: database } : {}),
-      ...(hostname ? { HOSTNAME: hostname } : {})
+      MYSQL_PORT: (port || 5432).toString(),
+      MYSQL_USERNAME: username || 'mysql',
+      ...(database ? { MYSQL_DATABASE: database } : {}),
+      ...(hostname ? { MYSQL_HOSTNAME: hostname } : {})
     };
     const secret = {
-      ...(password ? { PASSWORD: password } : {}),
-      ...(url ? { URL: url } : {})
+      ...(password ? { MYSQL_PASSWORD: password } : {}),
+      ...(url ? { MYSQL_URL: url } : {})
     };
     try {
       await this.coreV1Api.readNamespacedSecret(
