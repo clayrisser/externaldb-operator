@@ -159,7 +159,9 @@ export default class Connection {
 
   protected getDelimitedOptions(delimiter = '&'): string {
     if (!this.options) return '';
-    return `?${Object.entries(this.options)
+    return `${Object.keys(this.options).length ? '?' : ''}${Object.entries(
+      this.options
+    )
       .map(
         ([key, value]: [string, any]) =>
           `${encodeURIComponent(key)}=${encodeURIComponent(
