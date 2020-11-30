@@ -19,12 +19,12 @@ import ora from 'ora';
 export default abstract class DatabaseClient {
   public spinner = ora();
 
-  abstract async createDatabase(
+  abstract createDatabase(
     databaseName: string,
     createDatabaseOptions?: Partial<CreateDatabaseOptions>
   ): Promise<CreateDatabaseResult>;
 
-  abstract async dropDatabase(
+  abstract dropDatabase(
     databaseName: string,
     dropDatabaseOptions?: Partial<DropDatabaseOptions>
   ): Promise<void>;
