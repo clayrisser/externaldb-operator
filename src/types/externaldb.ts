@@ -103,6 +103,7 @@ export enum ExternalDatabaseStatusDatabase {
 
 export enum PostgresSslMode {
   Allow = 'allow',
+  AllowUnauthorized = 'allow-unauthorized',
   Disable = 'disable',
   Prefer = 'prefer',
   Require = 'require',

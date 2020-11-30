@@ -285,7 +285,11 @@ export default class ExternalPostgres extends ExternalDatabase {
         protocol: Protocol.Postgres,
         username: username || 'postgres',
         options: {
-          sslmode: sslMode || PostgresSslMode.Prefer
+          ...(sslMode === PostgresSslMode.AllowUnauthorized
+            ? {}
+            : {
+                sslmode: sslMode || PostgresSslMode.Prefer
+              })
         }
       }
     );
@@ -312,7 +316,11 @@ export default class ExternalPostgres extends ExternalDatabase {
       protocol: Protocol.Postgres,
       username: connection.username,
       options: {
-        sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
+        ...(connection.options?.sslmode === PostgresSslMode.AllowUnauthorized
+          ? {}
+          : {
+              sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
+            })
       }
     });
     const {

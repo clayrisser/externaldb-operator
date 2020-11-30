@@ -49,7 +49,7 @@ type ConnectionPostgresSpec struct {
 	// config map name containing `POSTGRES_HOSTNAME`, `POSTGRES_PORT`, `POSTGRES_USERNAME` or `POSTGRES_DATABASE`
 	ConfigMapName string `json:"configMapName,omitempty"`
 
-        // postgres ssl mode (ALLOW, DISABLE, PREFER, REQUIRE, VERIFY_CA, VERIFY_FULL)
+        // postgres ssl mode (allow, disable, prefer, allow-unauthorized, require, verify-ca, verify-full)
 	SslMode string `json:"sslMode,omitempty"`
 }
 
