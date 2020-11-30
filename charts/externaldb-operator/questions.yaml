@@ -24,39 +24,147 @@ questions:
     required: true
     label: 'update strategy'
     group: Config
-  # - variable: config.externaldbOperator.resources.defaults
-  #   default: true
-  #   description: ''
-  #   type: boolean
-  #   required: true
-  #   label: 'externaldb operator resources defaults'
-  #   show_subquestion_if: false
-  #   group: Config
-  #   subquestions:
-  #     - variable: config.externaldbOperator.resources.requests.cpu
-  #       default: 100m
-  #       description: ''
-  #       type: string
-  #       required: true
-  #       label: 'externaldb operator resources requests cpu'
-  #     - variable: config.externaldbOperator.resources.requests.memory
-  #       default: 128Mi
-  #       description: ''
-  #       type: string
-  #       required: true
-  #       label: 'externaldb operator resources requests memory'
-  #     - variable: config.externaldbOperator.resources.limits.cpu
-  #       default: 500m
-  #       description: ''
-  #       type: string
-  #       required: true
-  #       label: 'externaldb operator resources limits cpu'
-  #     - variable: config.externaldbOperator.resources.limits.memory
-  #       default: 256Mi
-  #       description: ''
-  #       type: string
-  #       required: true
-  #       label: 'externaldb operator resources limits memory'
+  - variable: config.debug
+    default: false
+    description: ''
+    type: boolean
+    required: true
+    label: debug
+    group: Config
+  - variable: config.externaldbOperator.resources.enabled
+    default: false
+    description: ''
+    type: enum
+    options:
+      - defaults
+      - custom
+      - false
+    required: true
+    label: 'externaldb operator resources enabled'
+    show_subquestion_if: custom
+    group: Config
+    subquestions:
+      - variable: config.externaldbOperator.resources.requests.cpu
+        default: 100m
+        description: ''
+        type: string
+        required: true
+        label: 'externaldb operator resources requests cpu'
+      - variable: config.externaldbOperator.resources.requests.memory
+        default: 128Mi
+        description: ''
+        type: string
+        required: true
+        label: 'externaldb operator resources requests memory'
+      - variable: config.externaldbOperator.resources.limits.cpu
+        default: 500m
+        description: ''
+        type: string
+        required: true
+        label: 'externaldb operator resources limits cpu'
+      - variable: config.externaldbOperator.resources.limits.memory
+        default: 256Mi
+        description: ''
+        type: string
+        required: true
+        label: 'externaldb operator resources limits memory'
+
+# Connections
+  - variable: connections.postgres.enabled
+    default: false
+    description: ''
+    type: boolean
+    required: true
+    label: 'postgres enabled'
+    show_subquestion_if: true
+    group: Connections
+    subquestions:
+      - variable: connections.postgres.hostname
+        default: ''
+        description: ''
+        type: string
+        required: false
+        label: 'postgres hostname'
+      - variable: connections.postgres.username
+        default: postgres
+        description: ''
+        type: string
+        required: false
+        label: 'postgres username'
+      - variable: connections.postgres.password
+        default: ''
+        description: ''
+        type: password
+        required: false
+        label: 'postgres password'
+      - variable: connections.postgres.port
+        default: 5432
+        description: ''
+        type: int
+        min: 0
+        max: 65535
+        required: false
+        label: 'postgres port'
+      - variable: connections.postgres.sslMode
+        default: prefer
+        description: ''
+        type: enum
+        options:
+          - prefer
+          - allow
+          - disable
+          - require
+          - verify-ca
+          - verify-full
+        required: false
+        label: 'postgres port'
+      # - variable: connections.postgres.url
+      #   default: ''
+      #   description: ''
+      #   type: string
+      #   required: false
+      #   label: 'postgres url'
+  - variable: connections.mysql.enabled
+    default: false
+    description: ''
+    type: boolean
+    required: true
+    label: 'mysql enabled'
+    show_subquestion_if: true
+    group: Connections
+    subquestions:
+      - variable: connections.mysql.hostname
+        default: ''
+        description: ''
+        type: string
+        required: false
+        label: 'mysql hostname'
+      - variable: connections.mysql.username
+        default: mysql
+        description: ''
+        type: string
+        required: false
+        label: 'mysql username'
+      - variable: connections.mysql.password
+        default: ''
+        description: ''
+        type: password
+        required: false
+        label: 'mysql password'
+      - variable: connections.mysql.port
+        default: 3306
+        description: ''
+        type: int
+        min: 0
+        max: 65535
+        required: false
+        label: 'mysql port'
+      # - variable: connections.mysql.url
+      #   default: ''
+      #   description: ''
+      #   type: string
+      #   required: false
+      #   label: 'mysql url'
 
 # Images
   - variable: images.externaldbOperator.repository
@@ -67,7 +175,7 @@ questions:
     label: 'externaldb operator repository'
     group: Images
   - variable: images.externaldbOperator.tag
-    default: 0.0.2
+    default: 0.0.3
     description: ''
     type: string
     required: true

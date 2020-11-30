@@ -1,13 +1,13 @@
 images:
-  siliconOperator:
+  externaldbOperator:
     repository: codejamninja/externaldb-operator
-    tag: 0.0.2
+    tag: 0.0.3
 
 config:
   clusterProvider: infrastructure
   imagePullPolicy: IfNotPresent
   updateStrategy: RollingUpdate
-  siliconOperator:
+  externaldbOperator:
     baseUrl: ''
     hostname: ''
     resources:
@@ -17,3 +17,20 @@ config:
       limits:
         cpu: 500m
         memory: 256Mi
+
+connections:
+  postgres:
+    enabled: false
+    hostname: ''
+    password: ''
+    port: 5432
+    sslMode: prefer
+    url: ''
+    username: postgres
+  mysql:
+    enabled: false
+    hostname: ''
+    password: ''
+    port: 3306
+    url: ''
+    username: root
