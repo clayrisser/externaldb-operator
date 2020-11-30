@@ -23,7 +23,8 @@ import {
   ExternalDatabaseStatusDatabase,
   ExternalPostgresResource,
   ExternalPostgresStatus,
-  KustomizationResource
+  KustomizationResource,
+  PostgresSslMode
 } from '~/types';
 import {
   KustomizeResourceGroup,
@@ -220,6 +221,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     let port = connectionResource.spec?.port;
     let url = connectionResource.spec?.url;
     let username = connectionResource.spec?.username;
+    const sslMode = connectionResource.spec?.sslMode;
     if (
       connectionResource.metadata?.namespace &&
       connectionResource.spec?.configMapName
@@ -272,6 +274,7 @@ export default class ExternalPostgres extends ExternalDatabase {
       url || {
         database: database || 'postgres',
         hostname,
+        options: { sslmode: sslMode || PostgresSslMode.Prefer },
         password,
         port: port || 3306,
         protocol: Protocol.Postgres,
@@ -298,7 +301,10 @@ export default class ExternalPostgres extends ExternalDatabase {
       password: connection.password,
       port: connection.port,
       protocol: Protocol.Postgres,
-      username: connection.username
+      username: connection.username,
+      options: {
+        sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
+      }
     });
     const {
       database,

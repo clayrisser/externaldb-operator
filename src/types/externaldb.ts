@@ -50,7 +50,9 @@ export interface ConnectionMongoSpec extends ConnectionDatabaseSpec {}
 
 export interface ConnectionMysqlSpec extends ConnectionDatabaseSpec {}
 
-export interface ConnectionPostgresSpec extends ConnectionDatabaseSpec {}
+export interface ConnectionPostgresSpec extends ConnectionDatabaseSpec {
+  sslMode?: PostgresSslMode; // string `json:"sslMode,omitempty"`
+}
 
 export interface ExternalMongoSpec extends ExternalDatabaseSpec {}
 
@@ -97,4 +99,13 @@ export enum ExternalDatabaseStatusDatabase {
   Creating = 'CREATING',
   Deleting = 'DELETING',
   Failed = 'FAILED'
+}
+
+export enum PostgresSslMode {
+  Allow = 'allow',
+  Disable = 'disable',
+  Prefer = 'prefer',
+  Require = 'require',
+  VerifyCa = 'verify-ca',
+  VerifyFull = 'verify-full'
 }
