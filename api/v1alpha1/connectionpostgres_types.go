@@ -51,9 +51,6 @@ type ConnectionPostgresSpec struct {
 
         // postgres ssl mode (ALLOW, DISABLE, PREFER, REQUIRE, VERIFY_CA, VERIFY_FULL)
 	SslMode string `json:"sslMode,omitempty"`
-
-        // postgres reject unauthorized
-        RejectUnauthorized bool `json:"rejectUnauthorized,omitempty"`
 }
 
 // ConnectionPostgresStatus defines the observed state of ConnectionPostgres

@@ -51,7 +51,10 @@ export default class ExternalPostgres extends ExternalDatabase {
       return;
     }
     this.spinner.start(`dropping database '${database}'`);
-    const postgres = new Postgres({ connectionString: url });
+    const postgres = new Postgres({
+      connectionString: url,
+      ssl: { rejectUnauthorized: false }
+    });
     postgres.spinner = this.spinner;
     await postgres.dropDatabase(resource.spec.name);
     this.spinner.succeed(`dropped database '${database}'`);
@@ -75,7 +78,10 @@ export default class ExternalPostgres extends ExternalDatabase {
         },
         resource
       );
-      const postgres = new Postgres({ connectionString: url });
+      const postgres = new Postgres({
+        connectionString: url,
+        ssl: { rejectUnauthorized: false }
+      });
       postgres.spinner = this.spinner;
       const result = await postgres.createDatabase(resource.spec.name);
       if (result === CreateDatabaseResult.AlreadyExists) {
@@ -222,10 +228,6 @@ export default class ExternalPostgres extends ExternalDatabase {
     let port = connectionResource.spec?.port;
     let url = connectionResource.spec?.url;
     let username = connectionResource.spec?.username;
-    const rejectUnauthorized =
-      typeof connectionResource.spec?.rejectUnauthorized === 'undefined'
-        ? false
-        : connectionResource.spec?.rejectUnauthorized;
     if (
       connectionResource.metadata?.namespace &&
       connectionResource.spec?.configMapName
@@ -283,7 +285,6 @@ export default class ExternalPostgres extends ExternalDatabase {
         protocol: Protocol.Postgres,
         username: username || 'postgres',
         options: {
-          rejectUnauthorized,
           sslmode: sslMode || PostgresSslMode.Prefer
         }
       }
@@ -312,11 +313,7 @@ export default class ExternalPostgres extends ExternalDatabase {
       protocol: Protocol.Postgres,
       username: connection.username,
       options: {
-        sslmode: connection.options?.sslmode || PostgresSslMode.Prefer,
-        rejectUnauthorized:
-          typeof connection.options?.rejectUnauthorized === 'undefined'
-            ? false
-            : connection.options?.rejectUnauthorized
+        sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
       }
     });
     console.log('2', clonedConnection.url);

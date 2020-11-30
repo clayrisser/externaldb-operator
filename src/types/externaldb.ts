@@ -51,7 +51,6 @@ export interface ConnectionMongoSpec extends ConnectionDatabaseSpec {}
 export interface ConnectionMysqlSpec extends ConnectionDatabaseSpec {}
 
 export interface ConnectionPostgresSpec extends ConnectionDatabaseSpec {
-  rejectUnauthorized?: boolean; // bool `json:"rejectUnauthorized,omitempty"`
   sslMode?: PostgresSslMode; // string `json:"sslMode,omitempty"`
 }
 
