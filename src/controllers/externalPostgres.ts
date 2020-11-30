@@ -289,7 +289,6 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       }
     );
-    console.log('1', result.url);
     return result;
   }
 
@@ -316,7 +315,6 @@ export default class ExternalPostgres extends ExternalDatabase {
         sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
       }
     });
-    console.log('2', clonedConnection.url);
     const {
       database,
       hostname,
