@@ -215,13 +215,17 @@ export default class ExternalPostgres extends ExternalDatabase {
   async getConnection(
     connectionResource: ConnectionPostgresResource
   ): Promise<Connection> {
+    const sslMode = connectionResource.spec?.sslMode;
     let database = connectionResource.spec?.database;
     let hostname = connectionResource.spec?.hostname;
     let password = connectionResource.spec?.password;
     let port = connectionResource.spec?.port;
     let url = connectionResource.spec?.url;
     let username = connectionResource.spec?.username;
-    const sslMode = connectionResource.spec?.sslMode;
+    const rejectUnauthorized =
+      typeof connectionResource.spec?.rejectUnauthorized === 'undefined'
+        ? false
+        : connectionResource.spec?.rejectUnauthorized;
     if (
       connectionResource.metadata?.namespace &&
       connectionResource.spec?.configMapName
@@ -270,17 +274,22 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       }
     }
-    return new Connection(
+    const result = new Connection(
       url || {
         database: database || 'postgres',
         hostname,
-        options: { sslmode: sslMode || PostgresSslMode.Prefer },
         password,
         port: port || 3306,
         protocol: Protocol.Postgres,
-        username: username || 'postgres'
+        username: username || 'postgres',
+        options: {
+          rejectUnauthorized,
+          sslmode: sslMode || PostgresSslMode.Prefer
+        }
       }
     );
+    console.log('1', result.url);
+    return result;
   }
 
   async createOrUpdateConnectionResources(
@@ -303,9 +312,14 @@ export default class ExternalPostgres extends ExternalDatabase {
       protocol: Protocol.Postgres,
       username: connection.username,
       options: {
-        sslmode: connection.options?.sslmode || PostgresSslMode.Prefer
+        sslmode: connection.options?.sslmode || PostgresSslMode.Prefer,
+        rejectUnauthorized:
+          typeof connection.options?.rejectUnauthorized === 'undefined'
+            ? false
+            : connection.options?.rejectUnauthorized
       }
     });
+    console.log('2', clonedConnection.url);
     const {
       database,
       hostname,

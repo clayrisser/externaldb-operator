@@ -129,6 +129,16 @@ export default class Connection {
     if (typeof port === 'number') this.port = port;
   }
 
+  static calcString(value: any): string {
+    if (typeof value === 'string') return value;
+    if (value instanceof RegExp) return value.toString();
+    try {
+      return JSON.stringify(value);
+    } catch (err) {
+      return value.toString();
+    }
+  }
+
   protected getAuth(): string {
     if (!this.username) return '';
     return `${encodeURIComponent(this.username)}:${encodeURIComponent(
@@ -152,7 +162,9 @@ export default class Connection {
     return `?${Object.entries(this.options)
       .map(
         ([key, value]: [string, any]) =>
-          `${encodeURIComponent(key)}=${encodeURIComponent(value)}`
+          `${encodeURIComponent(key)}=${encodeURIComponent(
+            Connection.calcString(value)
+          )}`
       )
       .join(delimiter)}`;
   }

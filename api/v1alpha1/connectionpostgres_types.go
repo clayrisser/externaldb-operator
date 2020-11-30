@@ -49,8 +49,11 @@ type ConnectionPostgresSpec struct {
 	// config map name containing `POSTGRES_HOSTNAME`, `POSTGRES_PORT`, `POSTGRES_USERNAME` or `POSTGRES_DATABASE`
 	ConfigMapName string `json:"configMapName,omitempty"`
 
-        // ssl mode (ALLOW, DISABLE, PREFER, REQUIRE, VERIFY_CA, VERIFY_FULL)
+        // postgres ssl mode (ALLOW, DISABLE, PREFER, REQUIRE, VERIFY_CA, VERIFY_FULL)
 	SslMode string `json:"sslMode,omitempty"`
+
+        // postgres reject unauthorized
+        RejectUnauthorized bool `json:"rejectUnauthorized,omitempty"`
 }
 
 // ConnectionPostgresStatus defines the observed state of ConnectionPostgres
