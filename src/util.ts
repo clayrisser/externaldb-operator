@@ -34,6 +34,6 @@ export function kind2plural(kind: string) {
   return `${lowercasedKind}s`;
 }
 
-export function getGroupName(groupNamePrefix: string) {
-  return `${groupNamePrefix}.${project.domain}`;
+export function getGroupName(groupNamePrefix: string, domain?: string) {
+  return `${groupNamePrefix}.${domain || project.domain}`;
 }

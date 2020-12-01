@@ -128,14 +128,14 @@ export default class ExternalPostgres extends ExternalDatabase {
     if (!resource.metadata?.name || !resource.metadata.namespace) return;
     try {
       await this.customObjectsApi.getNamespacedCustomObject(
-        getGroupName(KustomizeResourceGroup.Kustomize),
+        getGroupName(KustomizeResourceGroup.Kustomize, 'siliconhills.dev'),
         KustomizeResourceVersion.V1alpha1,
         resource.metadata.namespace,
         kind2plural(KustomizeResourceKind.Kustomization),
         resource.metadata.name
       );
       await this.customObjectsApi.patchNamespacedCustomObject(
-        getGroupName(KustomizeResourceGroup.Kustomize),
+        getGroupName(KustomizeResourceGroup.Kustomize, 'siliconhills.dev'),
         KustomizeResourceVersion.V1alpha1,
         resource.metadata.namespace,
         kind2plural(KustomizeResourceKind.Kustomization),
@@ -157,6 +157,11 @@ export default class ExternalPostgres extends ExternalDatabase {
     } catch (err) {
       if (err.statusCode !== 404) throw err;
       const kustomizationResource: KustomizationResource = {
+        apiVersion: `${getGroupName(
+          KustomizeResourceGroup.Kustomize,
+          'siliconhills.dev'
+        )}/${KustomizeResourceVersion.V1alpha1}`,
+        kind: KustomizeResourceKind.Kustomization,
         metadata: {
           name: resource.metadata.name,
           namespace: resource.metadata.namespace
@@ -164,7 +169,7 @@ export default class ExternalPostgres extends ExternalDatabase {
         spec: resource.spec?.kustomization
       };
       await this.customObjectsApi.createNamespacedCustomObject(
-        getGroupName(KustomizeResourceGroup.Kustomize),
+        getGroupName(KustomizeResourceGroup.Kustomize, 'siliconhills.dev'),
         KustomizeResourceVersion.V1alpha1,
         resource.metadata.namespace,
         kind2plural(KustomizeResourceKind.Kustomization),
