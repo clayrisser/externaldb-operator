@@ -113,6 +113,7 @@ export interface KustomizationSpec {
   commonAnnotations?: HashMap<string>; // map[string]string `json:"commonAnnotations,omitempty" yaml:"commonAnnotations,omitempty"`
   commonLabels?: HashMap<string>; // map[string]string `json:"commonLabels,omitempty" yaml:"commonLabels,omitempty"`
   configMapGenerator?: ConfigMapArgs[]; // []kustomizeTypes.ConfigMapArgs `json:"configMapGenerator,omitempty" yaml:"configMapGenerator,omitempty"`
+  configuration?: TransformerConfig; // TransformerConfig `json:"configuration,omitempty" yaml:"configuration,omitempty"`
   crds?: string[]; // []string `json:"crds,omitempty" yaml:"crds,omitempty"`
   generatorOptions?: any; // *kustomizeTypes.GeneratorOptions `json:"generatorOptions,omitempty" yaml:"generatorOptions,omitempty"`
   images?: Image[]; // []kustomizeTypes.Image `json:"images,omitempty" yaml:"images,omitempty"`
@@ -131,3 +132,26 @@ export interface KustomizationSpec {
 export interface KustomizationResource extends KubernetesObject {
   spec?: KustomizationSpec;
 }
+
+export interface TransformerConfig {
+  // nameReference?: NbrSlice; // nbrSlice      `json:"nameReference,omitempty" yaml:"nameReference,omitempty"`
+  commonAnnotations?: FsSlice; // kustomizeTypes.FsSlice `json:"commonAnnotations,omitempty" yaml:"commonAnnotations,omitempty"`
+  commonLabels?: FsSlice; // kustomizeTypes.FsSlice `json:"commonLabels,omitempty" yaml:"commonLabels,omitempty"`
+  images?: FsSlice; // kustomizeTypes.FsSlice `json:"images,omitempty" yaml:"images,omitempty"`
+  namePrefix?: FsSlice; // kustomizeTypes.FsSlice `json:"namePrefix,omitempty" yaml:"namePrefix,omitempty"`
+  nameSpace?: FsSlice; // kustomizeTypes.FsSlice `json:"namespace,omitempty" yaml:"namespace,omitempty"`
+  nameSuffix?: FsSlice; // kustomizeTypes.FsSlice `json:"nameSuffix,omitempty" yaml:"nameSuffix,omitempty"`
+  replicas?: FsSlice; // kustomizeTypes.FsSlice `json:"replicas,omitempty" yaml:"replicas,omitempty"`
+  varReference?: FsSlice; // kustomizeTypes.FsSlice `json:"varReference,omitempty" yaml:"varReference,omitempty"`
+}
+
+// type FsSlice []FieldSpec
+export type FsSlice = FieldSpec[];
+
+// resid.Gvk `json:",inline,omitempty" yaml:",inline,omitempty"`
+export interface FieldSpec extends Gvk {
+  createIfNotPresent: boolean; // bool `json:"create,omitempty" yaml:"create,omitempty"`
+  path: string; // string `json:"path,omitempty" yaml:"path,omitempty"`
+}
+
+// export interface NbrSlice {}
