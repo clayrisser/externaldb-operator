@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { KustomizationResource } from 'kustomize-operator';
 import { ResourceMeta } from '@dot-i/k8s-operator';
 import Connection, { Protocol } from '~/connection';
 import { CreateDatabaseResult, Mysql } from '~/databases';
@@ -23,8 +24,7 @@ import {
   ExternalDatabaseStatusDatabase,
   ExternalDatabaseStatusPhase,
   ExternalMysqlResource,
-  ExternalMysqlStatus,
-  KustomizationResource
+  ExternalMysqlStatus
 } from '~/types';
 import {
   KustomizeResourceGroup,

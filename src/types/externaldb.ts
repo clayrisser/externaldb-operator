@@ -15,7 +15,7 @@
  */
 
 import { KubernetesObject } from '@kubernetes/client-node';
-import { KustomizationSpec } from './kustomize';
+import { KustomizationSpec } from 'kustomize-operator';
 
 export interface ConnectionDatabaseSpec {
   configMapName?: string; // string `json:"configMapName,omitempty"`

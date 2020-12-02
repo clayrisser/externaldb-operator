@@ -38,5 +38,4 @@ export interface HashMap<T = any> {
   [key: string]: T;
 }
 
-export * from './kustomize';
 export * from './externaldb';

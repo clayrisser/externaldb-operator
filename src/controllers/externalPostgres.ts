@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { KustomizationResource } from 'kustomize-operator';
 import { ResourceMeta } from '@dot-i/k8s-operator';
 import Connection, { Protocol } from '~/connection';
 import { CreateDatabaseResult, Postgres } from '~/databases';
@@ -24,7 +25,6 @@ import {
   ExternalDatabaseStatusPhase,
   ExternalPostgresResource,
   ExternalPostgresStatus,
-  KustomizationResource,
   PostgresSslMode
 } from '~/types';
 import {

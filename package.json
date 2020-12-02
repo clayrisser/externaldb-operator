@@ -1,6 +1,6 @@
 {
   "name": "externaldb-operator",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "operator to create external databases",
   "keywords": [
     "externaldb-operator"
@@ -57,6 +57,7 @@
     "core-js": "^3.6.5",
     "fs-extra": "^9.0.1",
     "isomorphic-ws": "^4.0.1",
+    "kustomize-operator": "^0.0.3",
     "mysql": "^2.18.1",
     "ora": "^5.1.0",
     "pg": "^8.4.2",
