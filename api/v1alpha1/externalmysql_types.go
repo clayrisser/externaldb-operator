@@ -52,6 +52,9 @@ type ExternalMysqlStatus struct {
         // external mysql message
         Message string `json:"message,omitempty"`
 
+        // external mysql previous phase (Pending, Succeeded, Failed, Unknown)
+        PreviousPhase string `json:"previousPhase,omitempty"`
+
         // external mysql phase (Pending, Succeeded, Failed, Unknown)
         Phase string `json:"phase,omitempty"`
 

@@ -59,6 +59,13 @@ export default class ExternalPostgres extends ExternalDatabase {
     postgres.spinner = this.spinner;
     await postgres.dropDatabase(resource.spec.name);
     this.spinner.succeed(`dropped database '${database}'`);
+    this.spinner.start(
+      `deleting kustomization '${resource.metadata?.name}' in namespace '${resource.metadata?.namespace}'`
+    );
+    await this.deleteKustomization(resource);
+    this.spinner.start(
+      `deleted kustomization '${resource.metadata?.name}' in namespace '${resource.metadata?.namespace}'`
+    );
   }
 
   async addedOrModified(
@@ -68,9 +75,12 @@ export default class ExternalPostgres extends ExternalDatabase {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
+    if (
+      resource?.status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded
+    ) {
+      return;
+    }
     const { database, url } = await this.getConnection(connectionResource);
-    const status = await this.getStatus(resource);
-    if (status?.database) return;
     this.spinner.start(`creating database '${database}'`);
     try {
       await this.updateStatus(
@@ -122,6 +132,17 @@ export default class ExternalPostgres extends ExternalDatabase {
       );
       throw err;
     }
+  }
+
+  async deleteKustomization(resource: ExternalPostgresResource): Promise<void> {
+    if (!resource.metadata?.name || !resource.metadata.namespace) return;
+    await this.customObjectsApi.deleteNamespacedCustomObject(
+      getGroupName(KustomizeResourceGroup.Kustomize, 'siliconhills.dev'),
+      KustomizeResourceVersion.V1alpha1,
+      resource.metadata.namespace,
+      kind2plural(KustomizeResourceKind.Kustomization),
+      resource.metadata.name
+    );
   }
 
   async applyKustomization(resource: ExternalPostgresResource): Promise<void> {
@@ -435,21 +456,5 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       );
     }
-  }
-
-  async getStatus(
-    resource: ExternalPostgresResource
-  ): Promise<ExternalPostgresStatus | undefined> {
-    if (!resource.metadata?.name || !resource.metadata.namespace) return;
-    const body = (
-      await this.customObjectsApi.getNamespacedCustomObjectStatus(
-        this.group,
-        ResourceVersion.V1alpha1,
-        resource.metadata.namespace,
-        this.plural,
-        resource.metadata.name
-      )
-    ).body as ExternalPostgresResource;
-    return body.status;
   }
 }

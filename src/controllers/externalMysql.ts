@@ -55,6 +55,13 @@ export default class ExternalMysql extends ExternalDatabase {
     mysql.spinner = this.spinner;
     await mysql.dropDatabase(resource.spec.name);
     this.spinner.succeed(`dropped database '${database}'`);
+    this.spinner.start(
+      `deleting kustomization '${resource.metadata?.name}' in namespace '${resource.metadata?.namespace}'`
+    );
+    await this.deleteKustomization(resource);
+    this.spinner.start(
+      `deleted kustomization '${resource.metadata?.name}' in namespace '${resource.metadata?.namespace}'`
+    );
   }
 
   async addedOrModified(
@@ -64,9 +71,12 @@ export default class ExternalMysql extends ExternalDatabase {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
+    if (
+      resource?.status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded
+    ) {
+      return;
+    }
     const { database, url } = await this.getConnection(connectionResource);
-    const status = await this.getStatus(resource);
-    if (status?.database) return;
     this.spinner.start(`creating database '${database}'`);
     try {
       await this.updateStatus(
@@ -115,6 +125,17 @@ export default class ExternalMysql extends ExternalDatabase {
       );
       throw err;
     }
+  }
+
+  async deleteKustomization(resource: ExternalMysqlResource): Promise<void> {
+    if (!resource.metadata?.name || !resource.metadata.namespace) return;
+    await this.customObjectsApi.deleteNamespacedCustomObject(
+      getGroupName(KustomizeResourceGroup.Kustomize, 'siliconhills.dev'),
+      KustomizeResourceVersion.V1alpha1,
+      resource.metadata.namespace,
+      kind2plural(KustomizeResourceKind.Kustomization),
+      resource.metadata.name
+    );
   }
 
   async applyKustomization(resource: ExternalMysqlResource): Promise<void> {
@@ -186,7 +207,10 @@ export default class ExternalMysql extends ExternalDatabase {
         {
           op: 'replace',
           path: '/status',
-          value: status
+          value: {
+            ...status,
+            previousPhase: resource.status?.phase
+          }
         }
       ],
       undefined,
@@ -406,21 +430,5 @@ export default class ExternalMysql extends ExternalDatabase {
         }
       );
     }
-  }
-
-  async getStatus(
-    resource: ExternalMysqlResource
-  ): Promise<ExternalMysqlStatus | undefined> {
-    if (!resource.metadata?.name || !resource.metadata.namespace) return;
-    const body = (
-      await this.customObjectsApi.getNamespacedCustomObjectStatus(
-        this.group,
-        ResourceVersion.V1alpha1,
-        resource.metadata.namespace,
-        this.plural,
-        resource.metadata.name
-      )
-    ).body as ExternalMysqlResource;
-    return body.status;
   }
 }

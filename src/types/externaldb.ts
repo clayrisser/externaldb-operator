@@ -46,6 +46,7 @@ export interface ExternalDatabaseStatus {
   database?: ExternalDatabaseStatusDatabase; // string `json:"database,omitempty"`
   message?: string; // string `json:"message,omitempty"`
   phase?: ExternalDatabaseStatusPhase; // string `json:"phase,omitempty"`
+  previousPhase?: ExternalDatabaseStatusPhase; // string `json:"previousPhase,omitempty"`
   ready?: boolean; // bool `json:"ready,omitempty"`
 }
 
