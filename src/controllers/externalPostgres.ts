@@ -75,11 +75,8 @@ export default class ExternalPostgres extends ExternalDatabase {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
-    if (
-      resource?.status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded
-    ) {
-      return;
-    }
+    const status = await this.getStatus(resource);
+    if (status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded) return;
     const { database, url } = await this.getConnection(connectionResource);
     this.spinner.start(`creating database '${database}'`);
     try {
@@ -204,6 +201,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     resource: ExternalPostgresResource
   ): Promise<void> {
     if (!resource.metadata?.name || !resource.metadata.namespace) return;
+    const previousStatus = await this.getStatus(resource);
     await this.customObjectsApi.patchNamespacedCustomObjectStatus(
       this.group,
       ResourceVersion.V1alpha1,
@@ -214,7 +212,10 @@ export default class ExternalPostgres extends ExternalDatabase {
         {
           op: 'replace',
           path: '/status',
-          value: status
+          value: {
+            ...status,
+            previousPhase: previousStatus?.phase
+          }
         }
       ],
       undefined,
@@ -456,5 +457,21 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       );
     }
+  }
+
+  async getStatus(
+    resource: ExternalPostgresResource
+  ): Promise<ExternalPostgresStatus | undefined> {
+    if (!resource.metadata?.name || !resource.metadata.namespace) return;
+    const body = (
+      await this.customObjectsApi.getNamespacedCustomObjectStatus(
+        this.group,
+        ResourceVersion.V1alpha1,
+        resource.metadata.namespace,
+        this.plural,
+        resource.metadata.name
+      )
+    ).body as ExternalPostgresResource;
+    return body.status;
   }
 }

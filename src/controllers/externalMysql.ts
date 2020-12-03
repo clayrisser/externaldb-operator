@@ -71,11 +71,8 @@ export default class ExternalMysql extends ExternalDatabase {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
-    if (
-      resource?.status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded
-    ) {
-      return;
-    }
+    const status = await this.getStatus(resource);
+    if (status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded) return;
     const { database, url } = await this.getConnection(connectionResource);
     this.spinner.start(`creating database '${database}'`);
     try {
@@ -197,6 +194,7 @@ export default class ExternalMysql extends ExternalDatabase {
     resource: ExternalMysqlResource
   ): Promise<void> {
     if (!resource.metadata?.name || !resource.metadata.namespace) return;
+    const previousStatus = await this.getStatus(resource);
     await this.customObjectsApi.patchNamespacedCustomObjectStatus(
       this.group,
       ResourceVersion.V1alpha1,
@@ -209,7 +207,7 @@ export default class ExternalMysql extends ExternalDatabase {
           path: '/status',
           value: {
             ...status,
-            previousPhase: resource.status?.phase
+            previousPhase: previousStatus?.phase
           }
         }
       ],
@@ -430,5 +428,21 @@ export default class ExternalMysql extends ExternalDatabase {
         }
       );
     }
+  }
+
+  async getStatus(
+    resource: ExternalMysqlResource
+  ): Promise<ExternalMysqlStatus | undefined> {
+    if (!resource.metadata?.name || !resource.metadata.namespace) return;
+    const body = (
+      await this.customObjectsApi.getNamespacedCustomObjectStatus(
+        this.group,
+        ResourceVersion.V1alpha1,
+        resource.metadata.namespace,
+        this.plural,
+        resource.metadata.name
+      )
+    ).body as ExternalMysqlResource;
+    return body.status;
   }
 }
