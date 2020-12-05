@@ -39,7 +39,8 @@ import ExternalDatabase from './externalDatabase';
 export default class ExternalPostgres extends ExternalDatabase {
   async deleted(
     resource: ExternalPostgresResource,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    _oldResource?: ExternalPostgresResource
   ): Promise<any> {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
@@ -70,13 +71,17 @@ export default class ExternalPostgres extends ExternalDatabase {
 
   async addedOrModified(
     resource: ExternalPostgresResource,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    oldResource?: ExternalPostgresResource
   ): Promise<any> {
-    if (!resource.spec?.name) return;
+    if (
+      !resource.spec?.name ||
+      resource.metadata?.generation === oldResource?.metadata?.generation
+    ) {
+      return;
+    }
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
-    const status = await this.getStatus(resource);
-    if (status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded) return;
     const { database, url } = await this.getConnection(connectionResource);
     this.spinner.start(`creating database '${database}'`);
     try {
@@ -201,7 +206,6 @@ export default class ExternalPostgres extends ExternalDatabase {
     resource: ExternalPostgresResource
   ): Promise<void> {
     if (!resource.metadata?.name || !resource.metadata.namespace) return;
-    const previousStatus = await this.getStatus(resource);
     await this.customObjectsApi.patchNamespacedCustomObjectStatus(
       this.group,
       ResourceVersion.V1alpha1,
@@ -212,10 +216,7 @@ export default class ExternalPostgres extends ExternalDatabase {
         {
           op: 'replace',
           path: '/status',
-          value: {
-            ...status,
-            previousPhase: previousStatus?.phase
-          }
+          value: status
         }
       ],
       undefined,
@@ -457,21 +458,5 @@ export default class ExternalPostgres extends ExternalDatabase {
         }
       );
     }
-  }
-
-  async getStatus(
-    resource: ExternalPostgresResource
-  ): Promise<ExternalPostgresStatus | undefined> {
-    if (!resource.metadata?.name || !resource.metadata.namespace) return;
-    const body = (
-      await this.customObjectsApi.getNamespacedCustomObjectStatus(
-        this.group,
-        ResourceVersion.V1alpha1,
-        resource.metadata.namespace,
-        this.plural,
-        resource.metadata.name
-      )
-    ).body as ExternalPostgresResource;
-    return body.status;
   }
 }

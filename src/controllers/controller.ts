@@ -31,20 +31,27 @@ export default abstract class Controller {
 
   spinner = ora();
 
-  async added(_resource: KubernetesObject, _meta: ResourceMeta): Promise<any> {}
+  async added(
+    _resource: KubernetesObject,
+    _meta: ResourceMeta,
+    _oldResource?: KubernetesObject
+  ): Promise<any> {}
 
   async addedOrModified(
     _resource: KubernetesObject,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    _oldResource?: KubernetesObject
   ): Promise<any> {}
 
   async deleted(
     _resource: KubernetesObject,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    _oldResource?: KubernetesObject
   ): Promise<any> {}
 
   async modified(
     _resource: KubernetesObject,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    _oldResource?: KubernetesObject
   ): Promise<any> {}
 }

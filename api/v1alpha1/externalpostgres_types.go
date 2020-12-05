@@ -52,9 +52,6 @@ type ExternalPostgresStatus struct {
         // external postgres message
         Message string `json:"message,omitempty"`
 
-        // external postgres previous phase (Pending, Succeeded, Failed, Unknown)
-        PreviousPhase string `json:"previousPhase,omitempty"`
-
         // external postgres phase (Pending, Succeeded, Failed, Unknown)
         Phase string `json:"phase,omitempty"`
 

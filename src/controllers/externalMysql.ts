@@ -38,7 +38,8 @@ import ExternalDatabase from './externalDatabase';
 export default class ExternalMysql extends ExternalDatabase {
   async deleted(
     resource: ExternalMysqlResource,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    _oldResource?: ExternalMysqlResource
   ): Promise<any> {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
@@ -66,13 +67,17 @@ export default class ExternalMysql extends ExternalDatabase {
 
   async addedOrModified(
     resource: ExternalMysqlResource,
-    _meta: ResourceMeta
+    _meta: ResourceMeta,
+    oldResource?: ExternalMysqlResource
   ): Promise<any> {
-    if (!resource.spec?.name) return;
+    if (
+      !resource.spec?.name ||
+      resource.metadata?.generation === oldResource?.metadata?.generation
+    ) {
+      return;
+    }
     const connectionResource = await this.getConnectionResource(resource);
     if (!connectionResource?.spec?.password) return;
-    const status = await this.getStatus(resource);
-    if (status?.previousPhase !== ExternalDatabaseStatusPhase.Succeeded) return;
     const { database, url } = await this.getConnection(connectionResource);
     this.spinner.start(`creating database '${database}'`);
     try {
@@ -194,7 +199,6 @@ export default class ExternalMysql extends ExternalDatabase {
     resource: ExternalMysqlResource
   ): Promise<void> {
     if (!resource.metadata?.name || !resource.metadata.namespace) return;
-    const previousStatus = await this.getStatus(resource);
     await this.customObjectsApi.patchNamespacedCustomObjectStatus(
       this.group,
       ResourceVersion.V1alpha1,
@@ -205,10 +209,7 @@ export default class ExternalMysql extends ExternalDatabase {
         {
           op: 'replace',
           path: '/status',
-          value: {
-            ...status,
-            previousPhase: previousStatus?.phase
-          }
+          value: status
         }
       ],
       undefined,
@@ -428,21 +429,5 @@ export default class ExternalMysql extends ExternalDatabase {
         }
       );
     }
-  }
-
-  async getStatus(
-    resource: ExternalMysqlResource
-  ): Promise<ExternalMysqlStatus | undefined> {
-    if (!resource.metadata?.name || !resource.metadata.namespace) return;
-    const body = (
-      await this.customObjectsApi.getNamespacedCustomObjectStatus(
-        this.group,
-        ResourceVersion.V1alpha1,
-        resource.metadata.namespace,
-        this.plural,
-        resource.metadata.name
-      )
-    ).body as ExternalMysqlResource;
-    return body.status;
   }
 }

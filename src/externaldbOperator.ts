@@ -17,6 +17,7 @@
 import Operator, { ResourceEventType } from '@dot-i/k8s-operator';
 import ora from 'ora';
 import Logger from './logger';
+import ResourceTracker from './resourceTracker';
 import { Config } from './config';
 import { getGroupName, kind2plural } from './util';
 import {
@@ -33,6 +34,8 @@ export default class ExternaldbOperator extends Operator {
   static labelNamespace = 'dev.siliconhills.helm2cattle';
 
   spinner = ora();
+
+  resourceTracker = new ResourceTracker();
 
   constructor(protected config: Config, protected log = new Logger()) {
     super(log);
@@ -86,18 +89,30 @@ export default class ExternaldbOperator extends Operator {
       ResourceVersion.V1alpha1,
       kind2plural(resourceKind),
       async (e) => {
+        const {
+          oldResource,
+          newResource
+        } = this.resourceTracker.rotateResource(e.object);
         try {
           switch (e.type) {
             case ResourceEventType.Added:
-              await controller.added(e.object, e.meta);
-              await controller.addedOrModified(e.object, e.meta);
+              await controller.added(newResource, e.meta, oldResource);
+              await controller.addedOrModified(
+                newResource,
+                e.meta,
+                oldResource
+              );
               return;
             case ResourceEventType.Deleted:
-              await controller.deleted(e.object, e.meta);
+              await controller.deleted(newResource, e.meta, oldResource);
               return;
             case ResourceEventType.Modified:
-              await controller.modified(e.object, e.meta);
-              await controller.addedOrModified(e.object, e.meta);
+              await controller.modified(newResource, e.meta, oldResource);
+              await controller.addedOrModified(
+                newResource,
+                e.meta,
+                oldResource
+              );
               return;
           }
         } catch (err) {

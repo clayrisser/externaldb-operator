@@ -1,6 +1,6 @@
 {
   "name": "externaldb-operator",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "operator to create external databases",
   "keywords": [
     "externaldb-operator"
