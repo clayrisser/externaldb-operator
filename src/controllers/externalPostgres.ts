@@ -44,7 +44,7 @@ export default class ExternalPostgres extends ExternalDatabase {
   ): Promise<any> {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
-    if (!connectionResource?.spec?.password) return;
+    if (!connectionResource?.spec) return;
     const { database, url } = await this.getConnection(connectionResource);
     if (
       resource.status?.database !== ExternalDatabaseStatusDatabase.Created ||
@@ -76,12 +76,13 @@ export default class ExternalPostgres extends ExternalDatabase {
   ): Promise<any> {
     if (
       !resource.spec?.name ||
-      resource.metadata?.generation === oldResource?.metadata?.generation
+      (resource.metadata?.generation &&
+        resource.metadata?.generation === oldResource?.metadata?.generation)
     ) {
       return;
     }
     const connectionResource = await this.getConnectionResource(resource);
-    if (!connectionResource?.spec?.password) return;
+    if (!connectionResource?.spec) return;
     const { database, url } = await this.getConnection(connectionResource);
     this.spinner.start(`creating database '${database}'`);
     try {
@@ -266,10 +267,7 @@ export default class ExternalPostgres extends ExternalDatabase {
     let port = connectionResource.spec?.port;
     let url = connectionResource.spec?.url;
     let username = connectionResource.spec?.username;
-    if (
-      connectionResource.metadata?.namespace &&
-      connectionResource.spec?.configMapName
-    ) {
+    if (connectionResource.metadata?.namespace && connectionResource.spec) {
       if (connectionResource.spec?.configMapName) {
         try {
           const configMap = (
@@ -303,11 +301,16 @@ export default class ExternalPostgres extends ExternalDatabase {
               connectionResource.metadata.namespace
             )
           ).body;
-          if (secret.stringData?.POSTGRES_PASSWORD) {
-            password = secret.stringData.POSTGRES_PASSWORD;
+          if (secret.data?.POSTGRES_PASSWORD) {
+            password = Buffer.from(
+              secret.data.POSTGRES_PASSWORD,
+              'base64'
+            ).toString('utf-8');
           }
-          if (secret.stringData?.POSTGRES_URL) {
-            url = secret.stringData.POSTGRES_URL;
+          if (secret.data?.POSTGRES_URL) {
+            url = Buffer.from(secret.data.POSTGRES_URL, 'base64').toString(
+              'utf-8'
+            );
           }
         } catch (err) {
           if (err.statusCode !== 404) throw err;

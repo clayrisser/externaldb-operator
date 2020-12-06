@@ -19,6 +19,11 @@ export default class ResourceTracker<T = KubernetesObject> {
     this.oldResources[id] = resource;
     return { oldResource, newResource };
   }
+
+  resetResource(resource: T) {
+    const id = this.getResourceId(resource);
+    delete this.oldResources[id];
+  }
 }
 
 export interface ResourcePair<T = KubernetesObject> {

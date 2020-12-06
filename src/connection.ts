@@ -101,8 +101,8 @@ export default class Connection {
       if (!username) {
         throw new Error('username must be set if password is set');
       }
-      this.username = decodeURIComponent(username);
     }
+    if (username) this.username = decodeURIComponent(username);
     if (hosts) {
       this.hosts = Object.entries(hosts).reduce(
         (hosts: Hosts, [hostname, port]: [string, Port]) => {

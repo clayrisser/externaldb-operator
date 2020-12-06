@@ -104,6 +104,7 @@ export default class ExternaldbOperator extends Operator {
               );
               return;
             case ResourceEventType.Deleted:
+              this.resourceTracker.resetResource(e.object);
               await controller.deleted(newResource, e.meta, oldResource);
               return;
             case ResourceEventType.Modified:
@@ -116,7 +117,6 @@ export default class ExternaldbOperator extends Operator {
               return;
           }
         } catch (err) {
-          console.log(err);
           this.spinner.fail(
             [
               err.message || '',

@@ -43,7 +43,7 @@ export default class ExternalMysql extends ExternalDatabase {
   ): Promise<any> {
     if (!resource.spec?.name) return;
     const connectionResource = await this.getConnectionResource(resource);
-    if (!connectionResource?.spec?.password) return;
+    if (!connectionResource?.spec) return;
     const { database, url } = await this.getConnection(connectionResource);
     if (
       resource.status?.database !== ExternalDatabaseStatusDatabase.Created ||
@@ -77,7 +77,7 @@ export default class ExternalMysql extends ExternalDatabase {
       return;
     }
     const connectionResource = await this.getConnectionResource(resource);
-    if (!connectionResource?.spec?.password) return;
+    if (!connectionResource?.spec) return;
     const { database, url } = await this.getConnection(connectionResource);
     this.spinner.start(`creating database '${database}'`);
     try {
@@ -258,10 +258,7 @@ export default class ExternalMysql extends ExternalDatabase {
     let port = connectionResource.spec?.port;
     let url = connectionResource.spec?.url;
     let username = connectionResource.spec?.username;
-    if (
-      connectionResource.metadata?.namespace &&
-      connectionResource.spec?.configMapName
-    ) {
+    if (connectionResource.metadata?.namespace && connectionResource.spec) {
       if (connectionResource.spec?.configMapName) {
         try {
           const configMap = (
@@ -295,11 +292,16 @@ export default class ExternalMysql extends ExternalDatabase {
               connectionResource.metadata.namespace
             )
           ).body;
-          if (secret.stringData?.MYSQL_PASSWORD) {
-            password = secret.stringData.MYSQL_PASSWORD;
+          if (secret.data?.MYSQL_PASSWORD) {
+            password = Buffer.from(
+              secret.data.MYSQL_PASSWORD,
+              'base64'
+            ).toString('utf-8');
           }
-          if (secret.stringData?.MYSQL_URL) {
-            url = secret.stringData.MYSQL_URL;
+          if (secret.data?.MYSQL_URL) {
+            url = Buffer.from(secret.data.MYSQL_URL, 'base64').toString(
+              'utf-8'
+            );
           }
         } catch (err) {
           if (err.statusCode !== 404) throw err;
