@@ -354,7 +354,7 @@ export default class ExternalPostgres extends ExternalDatabase {
       hostname: connection.hostname,
       password: connection.password,
       port: connection.port,
-      protocol: Protocol.Postgres,
+      protocol: resource.spec.protocol || connection.protocol,
       username: connection.username,
       options: {
         ...(typeof connection.options?.sslmode === 'undefined'

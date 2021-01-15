@@ -12,6 +12,7 @@
     }
   },
   "rules": {
+    "@typescript-eslint/comma-dangle": ["error", "never"],
     "@typescript-eslint/indent": "off",
     "arrow-body-style": "off",
     "class-methods-use-this": "off",
@@ -82,7 +83,7 @@
     {
       "files": ["*.ts", "*.tsx"],
       "rules": {
-        "no-unused-vars": "off",
+        "no-unused-vars": "off"
       }
     }
   ],

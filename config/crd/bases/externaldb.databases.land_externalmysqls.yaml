@@ -745,6 +745,9 @@ spec:
             name:
               description: name is the name of the database to create
               type: string
+            protocol:
+              description: protocol to use in url
+              type: string
             secretName:
               description:
                 name of generated secret containing `MYSQL_PASSWORD` or

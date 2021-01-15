@@ -337,7 +337,7 @@ export default class ExternalMysql extends ExternalDatabase {
       hostname: connection.hostname,
       password: connection.password,
       port: connection.port,
-      protocol: Protocol.Mysql,
+      protocol: resource.spec.protocol || connection.protocol,
       username: connection.username
     });
     const {
