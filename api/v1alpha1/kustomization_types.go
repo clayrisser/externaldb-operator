@@ -22,6 +22,9 @@ import (
 
 // KustomizationSpec defines the desired state of Kustomization
 type KustomizationSpec struct {
+        // keep retrying when fails until timeout in milliseconds expires
+        RetryTimeout uint `json:"retryTimeout,omitempty" yaml:"retryTimeout,omitempty"`
+
         // kustomization config
         Configuration TransformerConfig `json:"configuration,omitempty" yaml:"configuration,omitempty"`
 

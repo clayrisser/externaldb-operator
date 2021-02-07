@@ -30,6 +30,8 @@ import {
   ExternalPostgres
 } from './controllers';
 
+const logger = console;
+
 export default class ExternaldbOperator extends Operator {
   static labelNamespace = 'dev.siliconhills.helm2cattle';
 
@@ -89,44 +91,47 @@ export default class ExternaldbOperator extends Operator {
       ResourceVersion.V1alpha1,
       kind2plural(resourceKind),
       async (e) => {
-        const {
-          oldResource,
-          newResource
-        } = this.resourceTracker.rotateResource(e.object);
-        try {
-          switch (e.type) {
-            case ResourceEventType.Added:
-              await controller.added(newResource, e.meta, oldResource);
-              await controller.addedOrModified(
-                newResource,
-                e.meta,
-                oldResource
-              );
-              return;
-            case ResourceEventType.Deleted:
-              this.resourceTracker.resetResource(e.object);
-              await controller.deleted(newResource, e.meta, oldResource);
-              return;
-            case ResourceEventType.Modified:
-              await controller.modified(newResource, e.meta, oldResource);
-              await controller.addedOrModified(
-                newResource,
-                e.meta,
-                oldResource
-              );
-              return;
+        // spawn as non blocking process
+        (async () => {
+          const {
+            oldResource,
+            newResource
+          } = this.resourceTracker.rotateResource(e.object);
+          try {
+            switch (e.type) {
+              case ResourceEventType.Added:
+                await controller.added(newResource, e.meta, oldResource);
+                await controller.addedOrModified(
+                  newResource,
+                  e.meta,
+                  oldResource
+                );
+                return;
+              case ResourceEventType.Deleted:
+                this.resourceTracker.resetResource(e.object);
+                await controller.deleted(newResource, e.meta, oldResource);
+                return;
+              case ResourceEventType.Modified:
+                await controller.modified(newResource, e.meta, oldResource);
+                await controller.addedOrModified(
+                  newResource,
+                  e.meta,
+                  oldResource
+                );
+                return;
+            }
+          } catch (err) {
+            this.spinner.fail(
+              [
+                err.message || '',
+                err.body?.message || err.response?.body?.message || ''
+              ].join(': ')
+            );
+            if (this.config.debug) this.log.error(err);
           }
-        } catch (err) {
-          this.spinner.fail(
-            [
-              err.message || '',
-              err.body?.message || err.response?.body?.message || ''
-            ].join(': ')
-          );
-          if (this.config.debug) this.log.error(err);
-        }
+        })().catch(logger.error);
       }
-    ).catch(console.error);
+    ).catch(logger.error);
   }
 }
 
